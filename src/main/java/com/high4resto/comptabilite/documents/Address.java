@@ -6,14 +6,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
-@Document(collection = "tva")
-public class Tva {
+@Document(collection = "address")
+public class Address {
     @Id
     private String id;
     @Getter @Setter
-    private String code;
-    @Getter @Setter
-    private double value;
-    @Getter @Setter
-    private String validity;
+    private String name;
+    @Override
+    public String toString()
+    {
+        String buffer=this.name+"\n";
+        return buffer;
+    }
 }

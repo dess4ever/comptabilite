@@ -1,0 +1,203 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <div class="container">
+        <h:form id="form1">
+            <h2 class="text-center card-title">Première connexion</h2>
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h3 class="text-center card-title">Informations générales</h3>
+                    <div class="card-text">
+                        <div class="row">
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="name" class="invoiceCardInput" label="Nom"
+                                        value="#{firstConnection.user.lastName}" />
+                                    <label for="name">Nom</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="firstName" class="invoiceCardInput" label="Prénom"
+                                        value="#{firstConnection.user.firstName}" />
+                                    <label for="firstName">Prénom</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="username" class="invoiceCardInput" required="true"
+                                        label="Nom d'utilisateur" value="#{firstConnection.user.username}" />
+                                    <label for="username">Nom d'utilisateur</label>
+                                </span>
+                            </div>
+
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="email" class="invoiceCardInput" label="Email"
+                                        value="#{firstConnection.user.email}" />
+                                    <label for="email">Email</label>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="ui-float-label mt-3">
+                                    <p:password id="password" class="invoiceCardInput" label="Mot de passe"
+                                        match="confirmPassword" required="true" value="#{firstConnection.user.password}"
+                                        feedback="true" promptLabel="Mot de passe chiffre lettre majuscule et caractères spéciaux" weakLabel="Faible"
+                                        goodLabel="Bon" strongLabel="Excellent" />
+                                    <label for="password">Mot de passe</label>
+                                </span>
+                            </div>
+                            <div class="col-6">
+                                <span class="ui-float-label mt-3">
+                                    <p:password id="confirmPassword" class="invoiceCardInput" required="true"
+                                        label="Confirmation du mot de passe" value="#{firstConnection.user.password}" />
+                                    <label for="confirmPassword">Confirmation du mot de passe</label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-5">
+                <div class="card-body text-center">
+                    <h3>Informations sur la société</h3>
+                    <div class="card-text">
+                        <div class="row">
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyName" class="invoiceCardInput" label="Nom de la société"
+                                        value="#{firstConnection.user.society.name}" />
+                                    <label for="societyName">Nom de la société</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyAddress" class="invoiceCardInput"
+                                        label="Adresse de la société"
+                                        value="#{firstConnection.user.society.address.name}" />
+                                    <label for="societyAddress">Adresse de la société</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societySiret" class="invoiceCardInput" label="Siret de la société"
+                                        value="#{firstConnection.user.society.siret}" />
+                                    <label for="societySiret">Siret de la société</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyPhone" class="invoiceCardInput"
+                                        label="Téléphone de la société" value="#{firstConnection.user.society.phone}" />
+                                    <label for="societyPhone">Téléphone de la société</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyRCS" class="invoiceCardInput" label="RCS de la société"
+                                        value="#{firstConnection.user.society.rcs}" />
+                                    <label for="societyRCS">RCS de la société</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyAPE" class="invoiceCardInput" label="APE de la société"
+                                        value="#{firstConnection.user.society.ape}" />
+                                    <label for="societyAPE">APE de la société</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyTVA" class="invoiceCardInput" label="TVA de la société"
+                                        value="#{firstConnection.user.society.tva_Number}" />
+                                    <label for="societyTVA">TVA de la société</label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Coordonée banquaire de la société</h3>
+                    <div class="card-text">
+                        <div class="row">
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankName" class="invoiceCardInput" label="Nom de la banque"
+                                        value="#{firstConnection.user.rib.bank_Name}" />
+                                    <label for="societyBankName">Nom de la banque</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankAddress" class="invoiceCardInput" label="Adresse"
+                                        value="#{firstConnection.user.rib.bank_Address.name}" />
+                                    <label for="societyBankAddress">Adresse</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankCode" class="invoiceCardInput" label="Code"
+                                        value="#{firstConnection.user.rib.bank_Code}" />
+                                    <label for="societyBankCode">Code</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankBranchCode" class="invoiceCardInput"
+                                        label="Code guichet" value="#{firstConnection.user.rib.branch_Code}" />
+                                    <label for="societyBankBranchCode">Code guichet</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankAccount" class="invoiceCardInput" label="Compte"
+                                        value="#{firstConnection.user.rib.account_Number}" />
+                                    <label for="societyBankAccount">Compte</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankKey" class="invoiceCardInput" label="Clé"
+                                        value="#{firstConnection.user.rib.key}" />
+                                    <label for="societyBankKey">Clé</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankIBAN" class="invoiceCardInput" label="IBAN"
+                                        value="#{firstConnection.user.rib.iban}" />
+                                    <label for="societyBankIBAN">IBAN</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankBIC" class="invoiceCardInput" label="BIC"
+                                        value="#{firstConnection.user.rib.bic}" />
+                                    <label for="societyBankBIC">BIC</label>
+                                </span>
+                            </div>
+                            <div class="col-4">
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText id="societyBankIcs" class="invoiceCardInput" label="ICS"
+                                        value="#{firstConnection.user.rib.ics}" />
+                                    <label for="societyBankIcs">ICS</label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-5">
+                <p:commandButton id="submit" class="btn btn-primary" value="Valider" update="@all"
+                    action="#{firstConnection.save}" />
+            </div>
+            <p:messages id="messages" showDetail="true">
+                <p:autoUpdate />
+            </p:messages>
+        </h:form>
+    </div>
+</ui:composition>

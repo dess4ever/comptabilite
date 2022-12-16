@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <div class="container">
+        <h2 class="mt-5 text-center">Documents</h2>
+        <div class="card">
+          <h:form id="form1">
+            <p:growl id="growl" showDetail="true" />
+          </h:form>
+        </div>
+
+        <div class="card">
+          <h:form id="form2" enctype="multipart/form-data">
+            <p:fileUpload id="fileUpload" value="#{fileUploadView.uploadedFile}" label="1 - Téléversert un fichier"
+              mode="simple" skinSimple="true" />
+            <p:commandButton id="submitButton" value="2 - Envoyer le fichier" ajax="false"
+              actionListener="#{fileUploadView.upload}" update="documents,growl" />
+          </h:form>
+        </div>
+
+        <div class="card">
+          <h:form id="form3">
+            <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" editable="true"
+              selection="#{fileUploadView.selectDocument}" rowKey="#{document.hash}" selectionMode="single">
+              <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="globalTab:form1:growl" />
+              <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="globalTab:form1:growl" />
+
+              <p:column headerText="Nom du fichier">
+                <p:cellEditor>
+                  <f:facet name="output">
+                    <h:outputText value="#{document.fileName}" />
+                  </f:facet>
+                  <f:facet name="input">
+                    <p:inputText id="fileNameInput" value="#{document.fileName}" style="width:100%" />
+                  </f:facet>
+                </p:cellEditor>
+              </p:column>
+
+              <p:column headerText="Type">
+                <p:cellEditor>
+                  <f:facet name="output">
+                    <h:outputText value="#{document.type}" />
+                  </f:facet>
+                  <f:facet name="input">
+                    <p:inputText id="fileTypeInput" value="#{document.type}" style="width:100%" />
+                  </f:facet>
+
+                </p:cellEditor>
+              </p:column>
+
+              <p:column headerText="Description">
+                <p:cellEditor>
+                  <f:facet name="output">
+                    <h:outputText value="#{document.description}" />
+                  </f:facet>
+                  <f:facet name="input">
+                    <p:inputTextarea id="fileDescriptionInput" value="#{document.description}" style="width:100%" />
+                  </f:facet>
+                </p:cellEditor>
+              </p:column>
+              <p:column style="width:6rem">
+                <p:rowEditor editTitle="Editer" cancelTitle="Annulé l'édition" saveTitle="Sauvegarder" />
+              </p:column>
+            </p:dataTable>
+
+            <p:contextMenu for="documents">
+              <p:menuitem value="Delete" update="documents globalTab:form1:growl" icon="pi pi-times"
+                action="#{fileUploadView.deleteDocument}">
+                <p:confirm header="Confirmation" message="Êtes-vous sur de vouloir supprimer le document ?"
+                  icon="pi pi-info-circle" />
+              </p:menuitem>
+              <p:menuitem value="Afficher le PDF" icon="pi pi-external-link" action="#{fileUploadView.viewPDF}"
+                update="pdfViewer" oncomplete="PF('pdfViewer').show()"></p:menuitem>
+            </p:contextMenu>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+              <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no ui-button-flat" />
+              <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" />
+            </p:confirmDialog>
+
+            <p:dialog id="pdfViewer" header="#{fileUploadView.selectDocument.fileName}" widgetVar="pdfViewer"
+              minHeight="40" showEffect="fade" modal="true">
+              <p:media cache="false" value="#{fileUploadView.stream}" width="1024px" height="768px" player="pdf">
+
+              </p:media>
+            </p:dialog>
+
+          </h:form>
+        </div>
+      </div>
+</ui:composition>

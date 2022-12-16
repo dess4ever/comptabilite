@@ -1,9 +1,8 @@
 package com.high4resto.comptabilite.repository;
-
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.high4resto.comptabilite.documents.City;
+import com.high4resto.comptabilite.documents.Rib;
 
-public interface CityRepository extends MongoRepository<City,String> {
+public interface RibRepository extends MongoRepository<Rib, String>{
     
 }
