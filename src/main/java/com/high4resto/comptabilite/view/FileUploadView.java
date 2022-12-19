@@ -7,12 +7,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.ApplicationScope;
+import org.springframework.web.context.annotation.SessionScope;
 
 import com.high4resto.comptabilite.documents.UploadedDocument;
 import com.high4resto.comptabilite.repository.UploadedDocumentRepository;
@@ -26,7 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Component
-@ApplicationScope
+@SessionScope
 public class FileUploadView implements Serializable {
     @Getter @Setter
     private UploadedFile file;
@@ -38,11 +39,15 @@ public class FileUploadView implements Serializable {
     @Getter @Setter
 	private transient UploadedFile uploadedFile;
     @Getter @Setter
-    private UploadedDocument selectDocument;
+    public UploadedDocument selectDocument;
 
     @PostConstruct
     public void init() {
         this.documents=documentController.findAll();
+    }
+
+    public void onRowSelect(SelectEvent<UploadedDocument> event) {
+        this.selectDocument=event.getObject();
     }
 
     public void addMessage(FacesMessage.Severity severity, String summary, String detail) {
@@ -98,6 +103,11 @@ public class FileUploadView implements Serializable {
 			byte[] file=this.uploadedFile.getContent();
             UploadedDocument document=new UploadedDocument();
             document.setContent(file);
+            try {
+                document.setBrut(TextUtil.getTextFromPDF(file));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             Date dateNow= new Date();
             document.setDate(dateNow.toString());
             document.setFileName(uploadedFile.getFileName());

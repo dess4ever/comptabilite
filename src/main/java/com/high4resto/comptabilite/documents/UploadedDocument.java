@@ -24,6 +24,7 @@ public class UploadedDocument {
     private byte[] content;
     @Getter @Setter
     private String date;
-
+    @Getter @Setter
+    private String brut;
 
 }

@@ -30,10 +30,13 @@ public class UserLoginView implements Serializable{
     private boolean first=false;
     @Getter @Setter
     private String role;
+    @Getter @Setter
+    private User user;
 
 
     @Autowired
     private UserRepository userRepository;
+
     @PostConstruct
     public void init() {
         long countUser=this.userRepository.count();
@@ -56,6 +59,7 @@ public class UserLoginView implements Serializable{
         else
         if(username != null  && TextUtil.generateSha1(password).equals(tpUser.getPassword())) {
             loggedIn = true;
+            this.user=tpUser;
             message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", username);
         } else {
             loggedIn = false;

@@ -3,11 +3,6 @@
     xmlns:ui="http://java.sun.com/jsf/facelets">
     <div class="container">
         <h2 class="mt-5 text-center">Documents</h2>
-        <div class="card">
-          <h:form id="form1">
-            <p:growl id="growl" showDetail="true" />
-          </h:form>
-        </div>
 
         <div class="card">
           <h:form id="form2" enctype="multipart/form-data">
@@ -21,9 +16,11 @@
         <div class="card">
           <h:form id="form3">
             <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" editable="true"
-              selection="#{fileUploadView.selectDocument}" rowKey="#{document.hash}" selectionMode="single">
-              <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="globalTab:form1:growl" />
-              <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="globalTab:form1:growl" />
+              selection="#{fileUploadView.selectDocument}" rowKey="#{document.hash}">
+              <p:ajax event="rowSelect" listener="#{fileUploadView.onRowSelect}" update="growl:growl"/>
+              <p:column selectionMode="single" style="width:16px;text-align:center"/>
+              <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="growl:growl" />
+              <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="growl:growl" />
 
               <p:column headerText="Nom du fichier">
                 <p:cellEditor>
@@ -64,7 +61,7 @@
             </p:dataTable>
 
             <p:contextMenu for="documents">
-              <p:menuitem value="Delete" update="documents globalTab:form1:growl" icon="pi pi-times"
+              <p:menuitem value="Delete" update="documents growl:growl" icon="pi pi-times"
                 action="#{fileUploadView.deleteDocument}">
                 <p:confirm header="Confirmation" message="Êtes-vous sur de vouloir supprimer le document ?"
                   icon="pi pi-info-circle" />

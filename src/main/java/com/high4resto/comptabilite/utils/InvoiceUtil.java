@@ -1,6 +1,5 @@
 package com.high4resto.comptabilite.utils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,6 +15,7 @@ import com.high4resto.comptabilite.documents.Vendor;
 import com.high4resto.comptabilite.documents.VendorInvoice;
 
 public class InvoiceUtil {
+    // Convert a pdf from Metro invoice to VendorInvoice object
     private static VendorInvoice importMetroInvoice(String pdf)
     {
         VendorInvoice invoice = new VendorInvoice();
@@ -48,7 +48,7 @@ public class InvoiceUtil {
         pattern = Pattern.compile("SIRET:[0-9]{3}.[0-9]{3}.[0-9]{3}.[0-9]{2}.[0-9]{3}");
         matcher = pattern.matcher(pdf);
         if (matcher.find())
-            society.setSiret(matcher.group().substring(6).trim());
+            society.setSiret(matcher.group().substring(6).replaceAll("\s+", ""));
 
         pattern = Pattern.compile("METRO [A-Z]{1,}");
         matcher = pattern.matcher(pdf);
@@ -140,14 +140,15 @@ public class InvoiceUtil {
         }
         return invoice;
     }
-    public static VendorInvoice importInvoice(byte[] content) {
+
+    // Convert pdf invoice to string
+    public static VendorInvoice importInvoice(String content) {
 		try {
-			String pdf = TextUtil.getTextFromPDF(content);
-			if (pdf.contains("METRO France")) {
-                return importMetroInvoice(pdf);
+			if (content.contains("METRO France")) {
+                return importMetroInvoice(content);
 			}
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return null;

@@ -39,6 +39,19 @@ public class TextUtil {
 		}
 		return index;
 	}
+	
+	 // Get random string[length]
+	public static String getRandomString(int length)
+	{
+		String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		StringBuilder pass = new StringBuilder();
+		for(int x=0;x<length;x++)
+		{
+			int i = (int)Math.floor(Math.random() * 62);
+			pass.append(chars.charAt(i));
+		}
+		return pass.toString();
+	}
 
 	/* Create a java function like String.indexOf but with regex */
 	public static int indexOf(String entry, String regex) {

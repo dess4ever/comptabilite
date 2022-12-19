@@ -5,7 +5,7 @@
         <h:form id="newVendorInvoice">
             <p:speedDial direction="righ" keepOpen="true">
                 <p:menuitem icon="pi pi-download" title="Générer la facture depuis un document"
-                    onclick="PF('selectForVendorInvoice').show()" />
+                    action="#{invoice.importInvoice}" update="growl:growl newVendorInvoice" />
                 <p:menuitem icon="pi pi-file-o" title="Remettre à zéro le formulaire" update="newVendorInvoice"
                     action="#{invoice.newVendorInvoice}" />
             </p:speedDial>
@@ -63,6 +63,8 @@
                                 <p:outputLabel for="@previous" value="Numéro de comte" />
                             </span>
                         </div>
+                        <p:commandButton class="btn btn-primary" value="Ajouter le RIB principal de la société"
+                            icon="pi pi-plus" action="#{invoice.setMyRib}" update="newVendorInvoice" />
                     </div>
                 </div>
             </div>
@@ -88,6 +90,8 @@
                                         value="#{invoice.newInvoice.issuer.society.siret}" />
                                     <p:outputLabel for="@previous" value="Siret" />
                                 </span>
+                                <p:commandButton class="btn btn-primary invoiceCardInput" value="Chercher informations depuis le SIRET"
+                                actionListener="#{invoice.searchFromSiret}" update="newVendorInvoice"/>
                                 <span class="ui-float-label mt-3">
                                     <p:inputText class="invoiceCardInput"
                                         value="#{invoice.newInvoice.issuer.society.siren}" />
@@ -154,52 +158,134 @@
             <div class="container">
                 <h3 class="text-center m-5">Produits et services</h3>
                 <div class="card">
+                    <p:dataTable id="vendorInvoiceTable" var="line"  value="#{invoice.newInvoice.invoiceLines}"
+                        editable="true" selection="#{invoice.selectedLine}" selectionMode="single" rowKey="#{line.rowKey}">
 
-                    <p:dataTable var="line" value="#{invoice.newInvoice.invoiceLines}">
                         <p:column headerText="Nom">
-                            <h:outputText value="#{line.item.fact_Name}" />
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.item.fact_Name}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{line.item.fact_Name}" />
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
 
                         <p:column headerText="Catégorie">
-                            <h:outputText value="#{line.item.category.name}" />
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.item.category.name}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{line.item.category.name}" />
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
 
                         <p:column headerText="Type (produit/service)">
-                            <h:outputText value="#{line.item.type}" />
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.item.type}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{line.item.type}" />
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
 
                         <p:column headerText="Quantité">
-                            <h:outputText value="#{line.quantity}" />
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.quantity}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{line.quantity}" />
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
 
                         <p:column headerText="Prix unitaire hors taxe">
-                            <h:outputText value="#{line.HTunitPrice}" />
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.HTunitPrice}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{line.HTunitPrice}" />
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
                         <p:column headerText="Prix total hors taxe">
-                            <h:outputText value="#{line.HTtotalPrice}" />
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.HTtotalPrice}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{line.HTtotalPrice}" />
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
                         <p:column headerText="Code TVA">
-                            <h:outputText value="#{line.item.tva.code}" />
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.item.tva.code}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{line.item.tva.code}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column>
+                            <p:rowEditor />
                         </p:column>
                     </p:dataTable>
+                    <div class="grid mt-3">
+                        <div class="col-sm">
+                            <p:commandButton value="Ajouter une ligne" icon="pi pi-plus"
+                                actionListener="#{invoice.addInvoiceLine}" update="vendorInvoiceTable" />
+                        </div>
+                    </div>
                 </div>
             </div>
-            <p:dialog widgetVar="selectForVendorInvoice" header="Sélection du document" width="800px" height="600px">
-                <p:dataTable var="file" value="#{invoice.invoicesFiles}" selectionMode="single"
-                    selection="#{invoice.selectedFiles}" rowKey="#{file.hash}">
-                    <p:column headerText="Nom">
-                        <h:outputText value="#{file.fileName}" />
-                    </p:column>
-                    <p:column headerText="Type">
-                        <h:outputText value="#{file.type}" />
-                    </p:column>
-                    <p:column headerText="Description">
-                        <h:outputText value="#{file.description}" />
-                    </p:column>
-                </p:dataTable>
-                <p:commandButton value="Procéder à l'import" oncomplete="PF('selectForVendorInvoice').close"
-                    update="newVendorInvoice" actionListener="#{invoice.importInvoice}" />
-            </p:dialog>
+            <div class="container mt-5">
+                <div class="card">
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column colspan="3">
+                                <h3 class="text-center">Total</h3>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h4 class="text-center">Total HT</h4>
+                            </p:column>
+                            <p:column>
+                                <h4 class="text-center">Total TVA</h4>
+                            </p:column>
+                            <p:column>
+                                <h4 class="text-center">Total TTC</h4>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="#{invoice.totalHT}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{invoice.totalTVA}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{invoice.totalTTC}" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:commandButton value="Recalculer le total" icon="pi pi-refresh"
+                        actionListener="#{invoice.recalculateTotal}" update="vendorInvoiceTable" />
+                </div>
+            </div>
+            <p:contextMenu for="vendorInvoiceTable" id="vendorInvoiceTableMenu">
+                <p:menuitem value="Supprimer" icon="pi pi-trash" update="newVendorInvoice"
+                    actionListener="#{invoice.deleteInvoiceLine}" />
+            </p:contextMenu>
         </h:form>
     </div>
 </ui:composition>

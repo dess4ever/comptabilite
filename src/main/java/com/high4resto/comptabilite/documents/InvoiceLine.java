@@ -1,8 +1,14 @@
 package com.high4resto.comptabilite.documents;
 
+import java.util.Date;
+import java.util.Random;
+
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.high4resto.comptabilite.utils.TextUtil;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,8 +17,8 @@ import lombok.Setter;
 public class InvoiceLine {
     @Id
     private String Id;
-    @DBRef
     @Getter @Setter
+    @Indexed(unique = true)
     private Item item;
     @Getter @Setter
     private int quantity;
@@ -26,7 +32,18 @@ public class InvoiceLine {
     private double TTCunitPrice;
     @Getter @Setter
     private double TTCtotalPrice;
+    @Transient
+    @Getter @Setter
+    private String rowKey;
     
+
+
+    public InvoiceLine()
+    {
+        this.item=new Item();
+        this.rowKey=TextUtil.getRandomString(20);
+    }
+
     @Override
     public String toString()
     {

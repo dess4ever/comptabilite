@@ -30,11 +30,19 @@
     </div>
   </h:form>
 
+  <div class="card">
+    <h:form id="growl">
+      <p:growl id="growl" showDetail="true" />
+    </h:form>
+  </div>
+
   <h1 class="text-center mt-5">Bienvenu dans votre gestionnaire de comptabilité</h1>
-  <p:tabView id="globalTab" rendered="#{login.loggedIn}">
+  <p:accordionPanel rendered="#{login.loggedIn}" activeIndex="">
     <p:tab title="Documents">
       <ui:include src="separate/document.xhtml" />
-    </p:tab>
+    </p:tab>  
+  </p:accordionPanel>
+  <p:tabView id="globalTab" rendered="#{login.loggedIn}">>
     <p:tab title="Factures">
       <p:tabView>
         <p:tab title="Vue générale">
@@ -64,7 +72,7 @@
   <h:panelGroup rendered="#{login.first}">
     <ui:include src="separate/firstConnection.xhtml" />
   </h:panelGroup>
-  <h:panelGroup rendered="#{lofgin.loggedIn}">
+  <h:panelGroup rendered="#{login.loggedIn}">
     <div class="container">
       <h2>Terminal de commande</h2>
       <div class="card">

@@ -3,16 +3,16 @@ package com.high4resto.comptabilite.view;
 import java.io.Serializable;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
 
 import com.high4resto.comptabilite.utils.OpenAiUtil;
 import com.high4resto.comptabilite.utils.TextUtil;
 
-import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 
 @Component
-@ViewScoped
+@SessionScope
 public class Terminal implements Serializable {
 
     private OpenAiUtil openAiUtil=new OpenAiUtil();

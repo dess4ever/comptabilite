@@ -37,17 +37,17 @@ public class FirstConnectionView implements Serializable {
         tva.setCode("A");
         tva.setValidity(new Date().toString());
         this.tvaRepository.save(tva);
-        
+        tva=new Tva();
         tva.setValue(5.5);
         tva.setCode("B");
         tva.setValidity(new Date().toString());
         this.tvaRepository.save(tva);
-
+        tva=new Tva();
         tva.setValue(10.0);
         tva.setCode("C");
         tva.setValidity(new Date().toString());
         this.tvaRepository.save(tva);
-
+        tva=new Tva();
         tva.setValue(20);
         tva.setCode("D");
         tva.setValidity(new Date().toString());
