@@ -30,5 +30,12 @@ public class Item {
     private Item_Category sub_Category;
     @Getter @Setter
     private String otherInfo;
+    public Item()
+    {
+        this.tva=new Tva();
+        this.category=new Item_Category();
+        this.sub_Category=new Item_Category();
+    }
+    
 
 }

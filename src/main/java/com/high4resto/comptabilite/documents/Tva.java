@@ -16,4 +16,11 @@ public class Tva {
     private double value;
     @Getter @Setter
     private String validity;
+    public Tva(String code, double value, String validity) {
+        this.code = code;
+        this.value = value;
+        this.validity = validity;
+    }
+    public Tva() {
+    }
 }

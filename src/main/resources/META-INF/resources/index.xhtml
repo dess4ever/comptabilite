@@ -32,7 +32,7 @@
 
   <div class="card">
     <h:form id="growl">
-      <p:growl id="growl" showDetail="true" />
+      <p:growl id="growl" widgetVar="growl" showDetail="true" />
     </h:form>
   </div>
 
@@ -44,11 +44,11 @@
   </p:accordionPanel>
   <p:tabView id="globalTab" rendered="#{login.loggedIn}">>
     <p:tab title="Factures">
-      <p:tabView>
+      <p:tabView id="vendorInvoice">
         <p:tab title="Vue générale">
 
         </p:tab>
-        <p:tab title="Entrer une Factures fournisseur">
+        <p:tab title="Factures fournisseur">
           <ui:include src="separate/vendorInvoice.xhtml" />
         </p:tab>
       </p:tabView>

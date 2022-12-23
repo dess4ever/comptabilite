@@ -13,6 +13,34 @@ public class OpenAiUtil {
     private OpenAiService oAIservice;    
     private String chatAccumulator;
     private  List<String> stopSequence;
+    public String request(String prompt)
+    {
+        String reponse="";
+        CompletionRequest completionRequest=CompletionRequest.builder()
+        .model("text-davinci-003")
+        .prompt(prompt)
+        .temperature(0.9)
+        .stop(this.stopSequence)
+        .topP(1.0)
+        .frequencyPenalty(0.0)
+        .presencePenalty(0.6)
+        .bestOf(1)
+        .echo(true)
+        .maxTokens(1024)
+        .user("testing")
+        .build();
+
+        List<CompletionChoice>list=oAIservice.createCompletion(completionRequest).getChoices();
+        for(CompletionChoice result:list)
+        {
+            reponse+=result;
+        }
+        int indexOfStart=reponse.indexOf(prompt)+prompt.length();
+        int indexStop=reponse.indexOf(", index=0");
+        String fReponse=reponse.substring(indexOfStart, indexStop);
+        return fReponse;
+    }
+    
     public Society extract_Society(String prompt)
     {
         String reponse="";

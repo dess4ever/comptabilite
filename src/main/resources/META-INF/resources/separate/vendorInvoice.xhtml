@@ -10,7 +10,29 @@
                     action="#{invoice.newVendorInvoice}" />
             </p:speedDial>
 
-            <div class="container" style="margin-top: 70px;">
+            <div class="container mt-5">
+                <p:accordionPanel id="SavedVendorInvoiceTab">
+                    <p:tab title="Factures enregistrées">
+                        <p:dataTable value="#{invoice.vendorInvoices}" var="invoices"
+                            selection="#{invoice.selectedInvoice}" rowKey="#{invoices.number}"
+                            emptyMessage="Aucune facture enregistrée" selectionMode="single" paginator="true" paginatorPosition="both"  rows="10">
+                            <p:ajax event="rowSelect" listener="#{invoice.onRowSelect}"
+                                update="globalTab:vendorInvoice:newVendorInvoice" />
+                            <p:column headerText="Numéro de facture">
+                                <h:outputText value="#{invoices.number}" />
+                            </p:column>
+                            <p:column headerText="Date de la facture">
+                                <h:outputText value="#{invoices.date_Of_Invoice}" />
+                            </p:column>
+                            <p:column headerText="Nom du fournisseur">
+                                <h:outputText value="#{invoices.issuer.society.name}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:accordionPanel>
+            </div>
+
+            <div class="container mt-5">
                 <h3 class="text-center m-5">Information de facture</h3>
                 <div class="row">
                     <div class="card col-sm">
@@ -90,8 +112,9 @@
                                         value="#{invoice.newInvoice.issuer.society.siret}" />
                                     <p:outputLabel for="@previous" value="Siret" />
                                 </span>
-                                <p:commandButton class="btn btn-primary invoiceCardInput" value="Chercher informations depuis le SIRET"
-                                actionListener="#{invoice.searchFromSiret}" update="newVendorInvoice"/>
+                                <p:commandButton class="btn btn-primary invoiceCardInput"
+                                    value="Chercher informations depuis le SIRET"
+                                    actionListener="#{invoice.searchFromSiret}" update="newVendorInvoice growl:growl" />
                                 <span class="ui-float-label mt-3">
                                     <p:inputText class="invoiceCardInput"
                                         value="#{invoice.newInvoice.issuer.society.siren}" />
@@ -142,6 +165,11 @@
                                     value="#{invoice.newInvoice.issuer.rib.account_Number}" />
                                 <p:outputLabel for="@previous" value="Numéro de comte" />
                             </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.issuer.rib.iban}" />
+                                <p:outputLabel for="@previous" value="IBAN" />
+                            </span>
                         </div>
                     </div>
                     <div class="card col-sm">
@@ -158,8 +186,12 @@
             <div class="container">
                 <h3 class="text-center m-5">Produits et services</h3>
                 <div class="card">
-                    <p:dataTable id="vendorInvoiceTable" var="line"  value="#{invoice.newInvoice.invoiceLines}"
-                        editable="true" selection="#{invoice.selectedLine}" selectionMode="single" rowKey="#{line.rowKey}">
+                    <p:dataTable id="vendorInvoiceTable" var="line" value="#{invoice.newInvoice.invoiceLines}"
+                        editable="true" selection="#{invoice.selectedLine}" selectionMode="single"
+                        rowKey="#{line.rowKey}" >
+
+                        <p:ajax event="rowEdit" listener="#{invoice.onRowEdit}" update="growl:growl globalTab:vendorInvoice:newVendorInvoice:invoiceTotal" />
+                        <p:ajax event="rowEditCancel" listener="#{invoice.onRowCancel}" update="growl:growl"/>
 
                         <p:column headerText="Nom">
                             <p:cellEditor>
@@ -178,7 +210,9 @@
                                     <h:outputText value="#{line.item.category.name}" />
                                 </f:facet>
                                 <f:facet name="input">
-                                    <p:inputText value="#{line.item.category.name}" />
+                                    <p:autoComplete value="#{line.item.category.name}" maxResults="10"
+                                        completeMethod="#{invoice.categorySuggestions}" />
+
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
@@ -246,10 +280,12 @@
                         </div>
                     </div>
                 </div>
+                <p:commandButton onclick="PF('openAiInvoiceLine').show()" value="Compléter automatiquement"
+                    icon="pi pi-plus" />
             </div>
             <div class="container mt-5">
                 <div class="card">
-                    <p:panelGrid>
+                    <p:panelGrid id="invoiceTotal">
                         <p:row>
                             <p:column colspan="3">
                                 <h3 class="text-center">Total</h3>
@@ -279,13 +315,32 @@
                         </p:row>
                     </p:panelGrid>
                     <p:commandButton value="Recalculer le total" icon="pi pi-refresh"
-                        actionListener="#{invoice.recalculateTotal}" update="vendorInvoiceTable" />
+                        action="#{invoice.recalculateTotal}" update="invoiceTotal" />
+                </div>
+            </div>
+            <div class="container mt-5">
+                <div class="card">
+                    <p:commandButton value="Enregistrer la facture" icon="pi pi-save"
+                        actionListener="#{invoice.saveInvoice}"
+                        update="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab growl:growl" />
                 </div>
             </div>
             <p:contextMenu for="vendorInvoiceTable" id="vendorInvoiceTableMenu">
                 <p:menuitem value="Supprimer" icon="pi pi-trash" update="newVendorInvoice"
                     actionListener="#{invoice.deleteInvoiceLine}" />
             </p:contextMenu>
+            <p:contextMenu for="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab"
+                id="vendorInvoiceTableShowMenu">
+                <p:menuitem value="Supprimer" icon="pi pi-trash"
+                    update="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab growl:growl"
+                    actionListener="#{invoice.deleteInvoice}" />
+            </p:contextMenu>
+            <p:dialog header="Sélection du texte à traiter" widgetVar="openAiInvoiceLine">
+                <p:inputTextarea id="openAiInvoiceLineText" value="#{invoice.textForItem}"
+                    rows="30" cols="80" autoResize="false" />
+                <p:commandButton value="Analyser" icon="pi pi-search"
+                    actionListener="#{invoice.openAiInvoiceLineAnalizer}" oncomplete="PF('openAiInvoiceLine').hide()" update="globalTab:vendorInvoice:newVendorInvoice:vendorInvoiceTable" />
+            </p:dialog>
         </h:form>
     </div>
 </ui:composition>

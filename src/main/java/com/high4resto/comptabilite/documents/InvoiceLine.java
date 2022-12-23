@@ -1,11 +1,7 @@
 package com.high4resto.comptabilite.documents;
 
-import java.util.Date;
-import java.util.Random;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.high4resto.comptabilite.utils.TextUtil;
@@ -18,7 +14,6 @@ public class InvoiceLine {
     @Id
     private String Id;
     @Getter @Setter
-    @Indexed(unique = true)
     private Item item;
     @Getter @Setter
     private int quantity;

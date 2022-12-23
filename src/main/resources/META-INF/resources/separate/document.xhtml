@@ -2,23 +2,18 @@
     xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:ui="http://java.sun.com/jsf/facelets">
     <div class="container">
-        <h2 class="mt-5 text-center">Documents</h2>
 
         <div class="card">
           <h:form id="form2" enctype="multipart/form-data">
-            <p:fileUpload id="fileUpload" value="#{fileUploadView.uploadedFile}" label="1 - Téléversert un fichier"
-              mode="simple" skinSimple="true" />
-            <p:commandButton id="submitButton" value="2 - Envoyer le fichier" ajax="false"
-              actionListener="#{fileUploadView.upload}" update="documents,growl" />
+            <p:fileUpload label="Téléverser un fichier" mode="advanced" listener="#{fileUploadView.handleFileUpload}" update="growl:growl"
+              allowTypes="/(\.|\/)(pdf|docx|doc|xls|txt|jpg|jpeg|png|)$/i"
+              maxFileSize="10000000" multiple="false" auto="true" />
           </h:form>
-        </div>
 
-        <div class="card">
-          <h:form id="form3">
-            <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" editable="true"
-              selection="#{fileUploadView.selectDocument}" rowKey="#{document.hash}">
+          <h:form id="form3" style="margin-top:-40px">
+            <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" selectionMode="single" editable="true"
+              selection="#{fileUploadView.selectDocument}" rowKey="#{document.hash}" paginator="true" paginatorPosition="both"  rows="10">
               <p:ajax event="rowSelect" listener="#{fileUploadView.onRowSelect}" update="growl:growl"/>
-              <p:column selectionMode="single" style="width:16px;text-align:center"/>
               <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="growl:growl" />
               <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="growl:growl" />
 
@@ -66,7 +61,7 @@
                 <p:confirm header="Confirmation" message="Êtes-vous sur de vouloir supprimer le document ?"
                   icon="pi pi-info-circle" />
               </p:menuitem>
-              <p:menuitem value="Afficher le PDF" icon="pi pi-external-link" action="#{fileUploadView.viewPDF}"
+              <p:menuitem value="Afficher" icon="pi pi-external-link" action="#{fileUploadView.view}"
                 update="pdfViewer" oncomplete="PF('pdfViewer').show()"></p:menuitem>
             </p:contextMenu>
 
@@ -77,9 +72,11 @@
 
             <p:dialog id="pdfViewer" header="#{fileUploadView.selectDocument.fileName}" widgetVar="pdfViewer"
               minHeight="40" showEffect="fade" modal="true">
-              <p:media cache="false" value="#{fileUploadView.stream}" width="1024px" height="768px" player="pdf">
+              <p:media rendered="#{fileUploadView.pdf}" cache="false" value="#{fileUploadView.streamPDF}" width="1024px" height="768px" player="pdf">
 
               </p:media>
+              <p:graphicImage rendered="#{fileUploadView.image}" value="#{fileUploadView.streamImage}" width="auto" height="768px" />
+
             </p:dialog>
 
           </h:form>
