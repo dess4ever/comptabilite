@@ -22,7 +22,9 @@
                                 <h:outputText value="#{invoices.number}" />
                             </p:column>
                             <p:column headerText="Date de la facture">
-                                <h:outputText value="#{invoices.date_Of_Invoice}" />
+                                <h:outputText value="#{invoices.invoiceDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Paris"/>
+                                </h:outputText>
                             </p:column>
                             <p:column headerText="Nom du fournisseur">
                                 <h:outputText value="#{invoices.issuer.society.name}" />
@@ -43,11 +45,11 @@
                                 <p:outputLabel for="@previous" value="Numéro de facture" />
                             </span>
                             <span class="ui-float-label mt-3">
-                                <p:inputText class="invoiceCardInput" value="#{invoice.newInvoice.date_Of_Invoice}" />
+                                <p:datePicker id="dateVendorInvoice1" class="invoiceCardInput" value="#{invoice.newInvoice.invoiceDate}" pattern="dd/MM/yyyy" />
                                 <p:outputLabel for="@previous" value="Date de la facture" />
                             </span>
                             <span class="ui-float-label mt-3">
-                                <p:inputText class="invoiceCardInput" value="#{invoice.newInvoice.date_Of_Payment}" />
+                                <p:datePicker id="basic" class="invoiceCardInput" value="#{invoice.newInvoice.payementDate}"  pattern="dd/MM/yyyy" />
                                 <p:outputLabel for="@previous" value="Date de payement" />
                             </span>
                             <span class="ui-float-label mt-3">

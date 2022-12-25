@@ -11,49 +11,63 @@
           </h:form>
 
           <h:form id="form3" style="margin-top:-40px">
-            <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" selectionMode="single" editable="true"
-              selection="#{fileUploadView.selectDocument}" rowKey="#{document.hash}" paginator="true" paginatorPosition="both"  rows="10">
-              <p:ajax event="rowSelect" listener="#{fileUploadView.onRowSelect}" update="growl:growl"/>
-              <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="growl:growl" />
-              <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="growl:growl" />
-
-              <p:column headerText="Nom du fichier">
-                <p:cellEditor>
-                  <f:facet name="output">
-                    <h:outputText value="#{document.fileName}" />
-                  </f:facet>
-                  <f:facet name="input">
-                    <p:inputText id="fileNameInput" value="#{document.fileName}" style="width:100%" />
-                  </f:facet>
-                </p:cellEditor>
-              </p:column>
-
-              <p:column headerText="Type">
-                <p:cellEditor>
-                  <f:facet name="output">
-                    <h:outputText value="#{document.type}" />
-                  </f:facet>
-                  <f:facet name="input">
-                    <p:inputText id="fileTypeInput" value="#{document.type}" style="width:100%" />
-                  </f:facet>
-
-                </p:cellEditor>
-              </p:column>
-
-              <p:column headerText="Description">
-                <p:cellEditor>
-                  <f:facet name="output">
-                    <h:outputText value="#{document.description}" />
-                  </f:facet>
-                  <f:facet name="input">
-                    <p:inputTextarea id="fileDescriptionInput" value="#{document.description}" style="width:100%" />
-                  </f:facet>
-                </p:cellEditor>
-              </p:column>
-              <p:column style="width:6rem">
-                <p:rowEditor editTitle="Editer" cancelTitle="Annulé l'édition" saveTitle="Sauvegarder" />
-              </p:column>
-            </p:dataTable>
+            <div class="card">
+              <div class="row">
+                <div class="col-6">
+                  <p:inputTextarea id="searchInput" value="#{fileUploadView.searchInput}" placeholder="Rechercher dans un document"
+                  style="width:100%" />
+                </div>
+                <div class="col-6">
+                  <p:commandButton value="Rechercher" icon="pi pi-search" action="#{fileUploadView.search}"
+                  update="documents" />  
+                </div>
+                <div class="col-12">
+                  <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" selectionMode="single" editable="true"
+                  selection="#{fileUploadView.selectDocument}" rowKey="#{document.document.hash}" paginator="true" paginatorPosition="both"  rows="10">
+                  <p:ajax event="rowSelect" listener="#{fileUploadView.onRowSelect}" update="growl:growl"/>
+                  <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="growl:growl" />
+                  <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="growl:growl" />
+    
+                  <p:column headerText="Nom du fichier">
+                    <p:cellEditor>
+                      <f:facet name="output">
+                        <h:outputText value="#{document.document.fileName}" />
+                      </f:facet>
+                      <f:facet name="input">
+                        <p:inputText id="fileNameInput" value="#{document.document.fileName}" style="width:100%" />
+                      </f:facet>
+                    </p:cellEditor>
+                  </p:column>
+    
+                  <p:column headerText="Type">
+                    <p:cellEditor>
+                      <f:facet name="output">
+                        <h:outputText value="#{document.document.type}" />
+                      </f:facet>
+                      <f:facet name="input">
+                        <p:inputText id="fileTypeInput" value="#{document.document.type}" style="width:100%" />
+                      </f:facet>
+    
+                    </p:cellEditor>
+                  </p:column>
+    
+                  <p:column headerText="Description">
+                    <p:cellEditor>
+                      <f:facet name="output">
+                        <h:outputText value="#{document.document.description}" />
+                      </f:facet>
+                      <f:facet name="input">
+                        <p:inputTextarea id="fileDescriptionInput" value="#{document.document.description}" style="width:100%" />
+                      </f:facet>
+                    </p:cellEditor>
+                  </p:column>
+                  <p:column style="width:6rem">
+                    <p:rowEditor editTitle="Editer" cancelTitle="Annulé l'édition" saveTitle="Sauvegarder" />
+                  </p:column>
+                </p:dataTable>
+                </div>
+              </div>
+            </div>
 
             <p:contextMenu for="documents">
               <p:menuitem value="Delete" update="documents growl:growl" icon="pi pi-times"
@@ -70,15 +84,12 @@
               <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" />
             </p:confirmDialog>
 
-            <p:dialog id="pdfViewer" header="#{fileUploadView.selectDocument.fileName}" widgetVar="pdfViewer"
+            <p:dialog id="pdfViewer" header="#{fileUploadView.selectDocument.document.fileName}" widgetVar="pdfViewer"
               minHeight="40" showEffect="fade" modal="true">
               <p:media rendered="#{fileUploadView.pdf}" cache="false" value="#{fileUploadView.streamPDF}" width="1024px" height="768px" player="pdf">
-
               </p:media>
               <p:graphicImage rendered="#{fileUploadView.image}" value="#{fileUploadView.streamImage}" width="auto" height="768px" />
-
             </p:dialog>
-
           </h:form>
         </div>
       </div>

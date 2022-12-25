@@ -3,8 +3,17 @@ package com.high4resto.comptabilite.utils;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Formatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,6 +49,17 @@ public class TextUtil {
 		return index;
 	}
 	
+	/* Create a java function like String.indexOf but with regex */
+	public static int indexOf(String entry, String regex) {
+		int index = -1;
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(entry);
+		if (matcher.find()) {
+			index = matcher.start();
+		}
+		return index;
+	}
+
 	 // Get random string[length]
 	public static String getRandomString(int length)
 	{
@@ -51,17 +71,6 @@ public class TextUtil {
 			pass.append(chars.charAt(i));
 		}
 		return pass.toString();
-	}
-
-	/* Create a java function like String.indexOf but with regex */
-	public static int indexOf(String entry, String regex) {
-		int index = -1;
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(entry);
-		if (matcher.find()) {
-			index = matcher.start();
-		}
-		return index;
 	}
 
 	public static double evaluateArithmeticExpression(String expression)
@@ -108,6 +117,22 @@ public class TextUtil {
 		return index;
 	}
 
+	// Generate Sha1 hash from a string
+	public static String generateSha1(String entry) {
+		String sha1 = "";
+		try {
+			MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+			crypt.reset();
+			crypt.update(entry.getBytes("UTF-8"));
+			sha1 = byteArray2Hex(crypt.digest());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sha1;
+	}
+
 	// Compare 2 strings with Levenshtein distance
 	public static int compareWithLevenshtein(String entry1, String entry2) {
 
@@ -128,22 +153,6 @@ public class TextUtil {
 										: 1));
 
 		return distance[entry1.length()][entry2.length()];
-	}
-
-	// Generate Sha1 hash from a string
-	public static String generateSha1(String entry) {
-		String sha1 = "";
-		try {
-			MessageDigest crypt = MessageDigest.getInstance("SHA-1");
-			crypt.reset();
-			crypt.update(entry.getBytes("UTF-8"));
-			sha1 = byteArray2Hex(crypt.digest());
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return sha1;
 	}
 
 	// Compare 2 strings with Jaro distance
@@ -248,6 +257,93 @@ public class TextUtil {
 			doc.close();
 		return stripper;
 	}
+
+	// decompose a word into a list of n-grams
+	private static List<String> decompose(String word, int n) {
+		List<String> ngrams = new ArrayList<String>();
+		for (int i = 0; i < word.length() - n + 1; i++)
+			ngrams.add(word.substring(i, i + n));
+		return ngrams;
+	}
+
+	// count all words from a list of n-grams and return a map
+	private static Map<String,Integer> countNgrams(List<String> ngrams,String text)
+	{
+		Map<String,Integer> map = new HashMap<String,Integer>();
+		for(String ngram : ngrams)
+		{
+			int count = 0;
+			int index = 0;
+			while((index = text.indexOf(ngram,index)) != -1)
+			{
+				index++;
+				count++;
+			}
+			map.put(ngram, count);
+		}
+		return map;
+	}
+
+	// return date from a string
+	public static Date getDateFromString(String date) throws ParseException {
+		Date rDate=new Date();
+		Pattern pattern = Pattern.compile("[0-9]{2}");
+		Matcher matcher = pattern.matcher(date);
+		if(matcher.find()) {
+			String day=matcher.group();
+			if(matcher.find()) {
+				String mont=matcher.group();
+				String year="2022";
+				String fdate=day+"/"+mont+"/"+year;
+				Locale locale = new Locale("fr", "FR");
+				return new SimpleDateFormat("dd/MM/yyyy",locale).parse(fdate);
+			}
+		}
+		return rDate;	
+	}
+
+	// Search inside a document a sentence and return a metric
+	public static double search(String sentence, String document){
+		double metric = 0;
+		sentence = sentence.toLowerCase();
+		document = document.toLowerCase();
+		sentence =  Normalizer.normalize(sentence, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").replaceAll("\\p{M}", "");
+		document =  Normalizer.normalize(document, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").replaceAll("\\p{M}", "");
+
+		if (sentence == null || document == null || sentence.length() < 3)
+			return 0;
+
+		String[] split=sentence.split("\n");
+
+		for(String s : split)
+		{
+			sentence=s;
+			for(int i=3;i<sentence.length();i++)
+			{
+				List<String> ngrams = decompose(sentence, i);
+				Map<String,Integer> map = countNgrams(ngrams,document);
+				double accumulator=0;
+				for(String ngram : ngrams)
+				{
+					if(map.containsKey(ngram))
+					{
+						accumulator += Double.valueOf(map.get(ngram)*i);
+					}
+				}
+				
+				if(document.contains(sentence))
+					accumulator*=sentence.length();
+				
+				metric+=accumulator;
+		
+			}
+		}
+
+
+		return metric;
+	}
+
+
 
 
 }

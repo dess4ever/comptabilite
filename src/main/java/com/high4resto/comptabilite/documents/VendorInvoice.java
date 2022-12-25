@@ -1,6 +1,7 @@
 package com.high4resto.comptabilite.documents;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -24,6 +25,10 @@ public class VendorInvoice {
     private List<InvoiceLine> invoiceLines;
     @Getter @Setter
     private String date_Of_Payment;
+    @Getter @Setter
+    private Date payementDate;
+    @Getter @Setter
+    private Date invoiceDate;
     @Getter @Setter
     private String date_Of_Invoice;
     @Getter @Setter

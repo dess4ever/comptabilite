@@ -30,6 +30,7 @@ public class OpenAiUtil {
         .user("testing")
         .build();
 
+        
         List<CompletionChoice>list=oAIservice.createCompletion(completionRequest).getChoices();
         for(CompletionChoice result:list)
         {
@@ -105,7 +106,7 @@ public class OpenAiUtil {
         this.stopSequence=new ArrayList<>();
         this.stopSequence.add("Human");
         this.stopSequence.add("AI:");
-        oAIservice = new OpenAiService(token);
+        oAIservice = new OpenAiService(token,60);
         chatAccumulator="Ce qui suit est une conversation avec un assistant d'IA. L'assistant est serviable et pragmatique. L'assistant est un expert en comptabilités. Il n'aime pas répondre aux questions autres que sur la comptabilité. \nHuman: Hello, qui es-tu?\nAI:  Je suis une IA créée par OpenAI. Comment puis-je vous aider aujourd'hui ?\nHuman:";
     }
 }

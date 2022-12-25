@@ -14,8 +14,6 @@ import com.high4resto.comptabilite.documents.Tva;
 import com.high4resto.comptabilite.documents.Vendor;
 import com.high4resto.comptabilite.documents.VendorInvoice;
 
-import ch.qos.logback.core.joran.conditional.ElseAction;
-
 public class InvoiceUtil {
 
     // Get invoice line whit OpenAI

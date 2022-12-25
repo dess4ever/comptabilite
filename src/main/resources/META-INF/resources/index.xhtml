@@ -21,8 +21,15 @@
 </h:head>
 
 <h:body>
+  <div class="card">
+    <h:form id="growl">
+      <p:growl id="growl" widgetVar="growl" showDetail="true" />
+    </h:form>
+  </div>
+
   <h:form>
     <div style="overflow:auto">
+      <h1 style="display:inline-block">Bienvenu dans votre gestionnaire de comptabilité</h1>
       <p:commandButton rendered="#{!login.loggedIn}" style="float:right; margin: 20px;" type="button"
         onclick="PF('dlg').show()" icon="pi pi-user-plus" styleClass="rounded-button ui-button-info" />
       <p:commandButton rendered="#{login.loggedIn}" style="float:right; margin: 20px;" 
@@ -30,13 +37,6 @@
     </div>
   </h:form>
 
-  <div class="card">
-    <h:form id="growl">
-      <p:growl id="growl" widgetVar="growl" showDetail="true" />
-    </h:form>
-  </div>
-
-  <h1 class="text-center mt-5">Bienvenu dans votre gestionnaire de comptabilité</h1>
   <p:accordionPanel rendered="#{login.loggedIn}" activeIndex="">
     <p:tab title="Documents">
       <ui:include src="separate/document.xhtml" />

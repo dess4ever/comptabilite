@@ -100,9 +100,9 @@ public class VendorInvoiceView implements Serializable{
     {
         if(this.document.getSelectDocument()!=null)
         {
-            String textForItem=this.document.getSelectDocument().getBrut();
-            this.newInvoice=InvoiceUtil.importInvoice(this.document.getSelectDocument().getBrut());
-            this.newInvoice.setRefDocument(this.document.getSelectDocument().getHash());
+            String textForItem=this.document.getSelectDocument().getDocument().getBrut();
+            this.newInvoice=InvoiceUtil.importInvoice(this.document.getSelectDocument().getDocument().getBrut());
+            this.newInvoice.setRefDocument(this.document.getSelectDocument().getDocument().getHash());
             this.calculateTotal();
             this.textForItem=textForItem;   
         }
