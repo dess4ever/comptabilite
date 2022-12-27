@@ -43,10 +43,10 @@
     </p:tab>  
   </p:accordionPanel>
   <p:tabView id="globalTab" rendered="#{login.loggedIn}">>
-    <p:tab title="Factures">
+    <p:tab title="Achats">
       <p:tabView id="vendorInvoice">
         <p:tab title="Vue générale">
-
+          <ui:include src="separate/globalpurchase.xhtml" />
         </p:tab>
         <p:tab title="Factures fournisseur">
           <ui:include src="separate/vendorInvoice.xhtml" />

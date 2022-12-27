@@ -1,5 +1,6 @@
 package com.high4resto.comptabilite.utils;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,7 +26,10 @@ public class InvoiceUtil {
 		text+="|---|---|---|---|\n";
 		String reponse=openAiUtil.request(text);
 		String[] linesReponse=reponse.split("\n");
-		for(String line:linesReponse)
+        Pattern pattern = Pattern.compile("(\\d+(?:[\\.\\,]\\d{2})?)");
+        Matcher matcher;
+
+        for(String line:linesReponse)
 		{
 			if(line.contains("|"))
 			{
@@ -48,8 +52,7 @@ public class InvoiceUtil {
                         String htTotalprice=lineSplit[4].replace(",", ".");
                         htTotalprice.replaceAll("\\s+", "");
                         htUnitprice.replaceAll("\\s+", "");
-                        Pattern pattern = Pattern.compile("(\\d+(?:[\\.\\,]\\d{2})?)");
-                        Matcher matcher = pattern.matcher(htUnitprice);
+                        matcher = pattern.matcher(htUnitprice);
                         if (matcher.find())
                         {
                             htUnitprice=matcher.group(1);
@@ -107,7 +110,11 @@ public class InvoiceUtil {
         String date = pdf.substring(beginDate, beginDate + 50);
         matcher = pattern.matcher(date);
         if (matcher.find())
-            invoice.setDate_Of_Invoice(matcher.group());
+            try {
+                invoice.setInvoiceDate(TextUtil.getDateFromString(matcher.group()));
+            } catch (ParseException e) {
+
+            }
 
         beginDate = pdf.indexOf("REFLEXE PLUS en cours de validité");
         pattern = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{2}.{3}[0-9]{2}:[0-9]{2}:[0-9]{2}");
@@ -165,7 +172,6 @@ public class InvoiceUtil {
 
             while (matcher.find() && matcher.end() < begin) {
                 int lenght=matcher.group().length()+2;
-
                 Tva tpTva = new Tva();
                 InvoiceLine tpLine = new InvoiceLine();
                 Item tpItem = new Item();

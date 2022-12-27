@@ -323,11 +323,13 @@ public class TextUtil {
 				List<String> ngrams = decompose(sentence, i);
 				Map<String,Integer> map = countNgrams(ngrams,document);
 				double accumulator=0;
+				double proportion=(Double.valueOf(i)/Double.valueOf(sentence.length()));
+				proportion=proportion*proportion*proportion;
 				for(String ngram : ngrams)
 				{
 					if(map.containsKey(ngram))
 					{
-						accumulator += Double.valueOf(map.get(ngram)*i);
+						accumulator += Double.valueOf(map.get(ngram))*proportion*50;
 					}
 				}
 				
@@ -338,12 +340,6 @@ public class TextUtil {
 		
 			}
 		}
-
-
 		return metric;
 	}
-
-
-
-
 }

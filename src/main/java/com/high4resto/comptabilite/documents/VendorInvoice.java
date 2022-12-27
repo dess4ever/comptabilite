@@ -1,5 +1,6 @@
 package com.high4resto.comptabilite.documents;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,20 @@ public class VendorInvoice {
     private double totalTVA10;
     @Getter @Setter @Transient
     private double totalTVA20;
+    @Setter @Transient
+    private LocalDate invoiceDateC;
+    public LocalDate getInvoiceDateC() {
+        //convert date to localdate
+        if(invoiceDate!=null)
+        {
+            invoiceDateC=invoiceDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+        }
+        else
+        {
+            invoiceDateC=LocalDate.now();
+        }
+        return invoiceDateC;
+    }
 
     public VendorInvoice()
     {

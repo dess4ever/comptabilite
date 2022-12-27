@@ -18,17 +18,18 @@
                   style="width:100%" />
                 </div>
                 <div class="col-6">
-                  <p:commandButton value="Rechercher" icon="pi pi-search" action="#{fileUploadView.search}"
+                  <p:commandButton value="Rechercher dans un document" icon="pi pi-search" action="#{fileUploadView.search}"
                   update="documents" />  
                 </div>
                 <div class="col-12">
                   <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" selectionMode="single" editable="true"
-                  selection="#{fileUploadView.selectDocument}" rowKey="#{document.document.hash}" paginator="true" paginatorPosition="both"  rows="10">
+                  selection="#{fileUploadView.selectDocument}" rowKey="#{document.document.hash}" paginator="true"
+                   paginatorPosition="both"  rows="10" filteredValue="#{fileUploadView.filteredDocuments}">
                   <p:ajax event="rowSelect" listener="#{fileUploadView.onRowSelect}" update="growl:growl"/>
                   <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="growl:growl" />
                   <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="growl:growl" />
     
-                  <p:column headerText="Nom du fichier">
+                  <p:column headerText="Nom du fichier" filterBy="#{document.document.fileName}" sortBy="#{document.document.fileName}" filterMatchMode="contains">
                     <p:cellEditor>
                       <f:facet name="output">
                         <h:outputText value="#{document.document.fileName}" />
@@ -39,7 +40,7 @@
                     </p:cellEditor>
                   </p:column>
     
-                  <p:column headerText="Type">
+                  <p:column headerText="Type" filterBy="#{document.document.type}" sortBy="#{document.document.type}" filterMatchMode="contains">
                     <p:cellEditor>
                       <f:facet name="output">
                         <h:outputText value="#{document.document.type}" />
@@ -51,7 +52,7 @@
                     </p:cellEditor>
                   </p:column>
     
-                  <p:column headerText="Description">
+                  <p:column headerText="Description" filterBy="#{document.document.description}" sortBy="#{document.document.description}" filterMatchMode="contains">
                     <p:cellEditor>
                       <f:facet name="output">
                         <h:outputText value="#{document.document.description}" />

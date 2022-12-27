@@ -40,6 +40,9 @@ public class FileUploadView implements Serializable {
     @Getter
     @Setter
     private List<ResultSearch> documents;
+    @Getter
+    @Setter
+    private List<ResultSearch> filteredDocuments;
     @Autowired
     UploadedDocumentRepository documentController;
     private static final long serialVersionUID = 1L;
@@ -73,8 +76,8 @@ public class FileUploadView implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }
 
-    public void onRowEdit(RowEditEvent<UploadedDocument> event) {
-        UploadedDocument tFile = (UploadedDocument) event.getObject();
+    public void onRowEdit(RowEditEvent<ResultSearch> event) {
+        UploadedDocument tFile = ((ResultSearch) event.getObject()).getDocument();
         addMessage(FacesMessage.SEVERITY_INFO, "Info", "La modification a été enregistrée");
         documentController.save(tFile);
     }
@@ -160,7 +163,6 @@ public class FileUploadView implements Serializable {
             // if file doesn't exist
             if (findByHash.isEmpty()) {
                 message = "Le fichier n'a pas encore été téléversé je le rajoute";
-                documentController.save(document);
                 this.documents = new ArrayList<ResultSearch>();
                 documentController.findAll().forEach(item->{
                     ResultSearch tpResultSearch = new ResultSearch(item);
@@ -190,7 +192,13 @@ public class FileUploadView implements Serializable {
                 }
                 Date dateNow = new Date();
                 document.setDate(dateNow.toString());
-    
+                documentController.save(document);
+                this.documents = new ArrayList<>();
+                documentController.findAll().forEach(item->{
+                    ResultSearch tpResultSearch = new ResultSearch(item);
+                    documents.add(tpResultSearch);
+                });
+        
             } 
             // if file already exist
             else {

@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <div class="container">
+        <h:form id="globalPurchase">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Vue générale</h3>
+                </div>
+                <div class="card-body">
+                    <p:outputLabel for="rangePurchase" value="Sélection des dates"/>
+                    <p:datePicker id="rangePurchase" selectionMode="range" value="#{globalPurchaseView.range}" readonlyInput="true"/>
+                    <p:commandButton value="Créer le rapport" action="#{globalPurchaseView.createReport}" update="report" />
+                    <p:panel id="report">
+                        <div class="row">
+                            <div class="card col-6">
+                                <div class="card-header">
+                                    <h4 class="card-title">Achats par fournisseur</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p:pieChart rendered="#{globalPurchaseView.showChart}" model="#{globalPurchaseView.byVendorModel}" />
+                                </div>
+                            </div>  
+                            <div class="card col-6">
+                                <div class="card-header">
+                                    <h4>Achats par catégorie</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p:pieChart rendered="#{globalPurchaseView.showChart}" model="#{globalPurchaseView.byCategoryModel}" />
+                                </div>
+                            </div>  
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
+
+        </h:form>
+    </div>
+    </ui:composition>

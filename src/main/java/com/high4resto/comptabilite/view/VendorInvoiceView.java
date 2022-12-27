@@ -2,6 +2,7 @@ package com.high4resto.comptabilite.view;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.primefaces.event.RowEditEvent;
@@ -55,12 +56,22 @@ public class VendorInvoiceView implements Serializable{
     
     @Getter @Setter
     private List<VendorInvoice> vendorInvoices=new ArrayList<VendorInvoice>();
+
+    @Getter @Setter
+    private List<VendorInvoice> filteredInvoice;
     
     @Getter @Setter
     private String textForItem;
+
+    @Getter @Setter
+    private Date FilterDateBegin;
+    @Getter @Setter
+    private Date FilterDateEnd;
     
+
     private List<Tva> tvas=new ArrayList<Tva>();
     private  TreeDictionnary categoryPrediction=new TreeDictionnary();
+
     
     @PostConstruct
     public void init() {
@@ -203,4 +214,5 @@ public class VendorInvoiceView implements Serializable{
         //add line to current invoice
         this.newInvoice.getInvoiceLines().addAll(InvoiceUtil.getInvoiceLineWhitOpenAI(this.textForItem));
     }
+
 }
