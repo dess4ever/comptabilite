@@ -17,6 +17,9 @@
     .invoiceCardInput {
       width: 100%;
     }
+    .ui-autocomplete-input {
+                width: 100%;
+            }
   </style>
 </h:head>
 
@@ -43,13 +46,13 @@
     </p:tab>  
   </p:accordionPanel>
   <p:tabView id="globalTab" rendered="#{login.loggedIn}">>
-    <p:tab title="Achats">
+    <p:tab title="Achats et ventes">
       <p:tabView id="vendorInvoice">
         <p:tab title="Vue générale">
           <ui:include src="separate/globalpurchase.xhtml" />
         </p:tab>
-        <p:tab title="Factures fournisseur">
-          <ui:include src="separate/vendorInvoice.xhtml" />
+        <p:tab title="Transactions">
+          <ui:include src="separate/transaction.xhtml" />
         </p:tab>
       </p:tabView>
     </p:tab>

@@ -1,18 +1,23 @@
-package com.high4resto.comptabilite.utils;
+package com.high4resto.comptabilite.services.implementations;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.high4resto.comptabilite.documents.Society;
 import com.theokanning.openai.OpenAiService;
 import com.theokanning.openai.completion.CompletionChoice;
 import com.theokanning.openai.completion.CompletionRequest;
 
+import jakarta.annotation.PostConstruct;
 
-public class OpenAiUtil {
+@Service
+public class AiService {
     private OpenAiService oAIservice;    
     private String chatAccumulator;
     private  List<String> stopSequence;
+
     public String request(String prompt)
     {
         String reponse="";
@@ -66,6 +71,7 @@ public class OpenAiUtil {
 		System.out.println(reponse);        
         return tpSociety;
     }
+    
     public String chat(String prompt)
     {
         String reponse="";
@@ -100,7 +106,8 @@ public class OpenAiUtil {
         chatAccumulator="Ce qui suit est une conversation avec un assistant d'IA. L'assistant est serviable et pragmatique. L'assistant est un expert en comptabilités. Il n'aime pas répondre aux questions autres que sur la comptabilité. \nHuman: Hello, qui es-tu?\nAI:  Je suis une IA créée par OpenAI. Comment puis-je vous aider aujourd'hui ?\nHuman:";
     }
 
-    public OpenAiUtil()
+    @PostConstruct
+    public void init()
     {
         String token = System.getenv("OPENAI_TOKEN");
         this.stopSequence=new ArrayList<>();

@@ -77,7 +77,12 @@
                   icon="pi pi-info-circle" />
               </p:menuitem>
               <p:menuitem value="Afficher" icon="pi pi-external-link" action="#{fileUploadView.view}"
-                update="pdfViewer" oncomplete="PF('pdfViewer').show()"></p:menuitem>
+                update="pdfViewer" oncomplete="PF('pdfViewer').show()">
+              </p:menuitem>
+
+              <p:menuitem value="Traiter le document comme facture" icon="pi pi-money-bill" action="#{transactionView.fromDocument}"
+                update="growl:growl globalTab:vendorInvoice:transaction:savedTransactions:newTransaction globalTab:vendorInvoice:transaction:openAiInvoiceLine">
+              </p:menuitem>
             </p:contextMenu>
 
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">

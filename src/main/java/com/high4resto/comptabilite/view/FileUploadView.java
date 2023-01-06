@@ -3,10 +3,6 @@ package com.high4resto.comptabilite.view;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.primefaces.event.FileUploadEvent;
@@ -21,14 +17,10 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import com.high4resto.comptabilite.dataStruct.ResultSearch;
 import com.high4resto.comptabilite.documents.UploadedDocument;
-import com.high4resto.comptabilite.repository.UploadedDocumentRepository;
-import com.high4resto.comptabilite.utils.BucketUtil;
-import com.high4resto.comptabilite.utils.OcrProcessImage;
+import com.high4resto.comptabilite.services.implementations.FileUploadService;
 import com.high4resto.comptabilite.utils.PrimefaceUtil;
-import com.high4resto.comptabilite.utils.TextUtil;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.PhaseId;
 import lombok.Getter;
@@ -37,15 +29,15 @@ import lombok.Setter;
 @Component
 @SessionScope
 public class FileUploadView implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @Autowired
+    private FileUploadService fileUploadService;
     @Getter
     @Setter
     private List<ResultSearch> documents;
     @Getter
     @Setter
     private List<ResultSearch> filteredDocuments;
-    @Autowired
-    UploadedDocumentRepository documentController;
-    private static final long serialVersionUID = 1L;
     @Getter
     @Setter
     public ResultSearch selectDocument;
@@ -61,32 +53,21 @@ public class FileUploadView implements Serializable {
 
     @PostConstruct
     public void init() {
-        this.documents = new ArrayList<>();
-        documentController.findAll().forEach(item->{
-            ResultSearch tpResultSearch = new ResultSearch(item);
-            documents.add(tpResultSearch);
-        });
+        this.documents = fileUploadService.getAllDocuments();
     }
 
     public void onRowSelect(SelectEvent<ResultSearch> event) {
         this.selectDocument = event.getObject();
     }
 
-    public void addMessage(FacesMessage.Severity severity, String summary, String detail) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
-    }
-
     public void onRowEdit(RowEditEvent<ResultSearch> event) {
-        UploadedDocument tFile = ((ResultSearch) event.getObject()).getDocument();
-        addMessage(FacesMessage.SEVERITY_INFO, "Info", "La modification a été enregistrée");
-        documentController.save(tFile);
+        ResultSearch tFile = (ResultSearch) event.getObject();
+        PrimefaceUtil.addMessages(fileUploadService.updateDocument(tFile));
     }
 
     public void deleteDocument() {
-        documentController.delete(selectDocument.getDocument());
+        PrimefaceUtil.addMessages(fileUploadService.deleteDocument(this.selectDocument));
         documents.remove(selectDocument);
-        addMessage(FacesMessage.SEVERITY_WARN, "Attention",
-                "Le document ayant pour nom:" + this.selectDocument.getDocument().getFileName() + " a été effacé!");
         selectDocument = null;
     }
 
@@ -95,7 +76,7 @@ public class FileUploadView implements Serializable {
     }
 
     public void onRowCancel(RowEditEvent<UploadedDocument> event) {
-        addMessage(FacesMessage.SEVERITY_WARN, "Attention", "Les modification ont été annulées");
+        PrimefaceUtil.warn("Les modification ont été annulées");
     }
 
     public void view() {
@@ -147,78 +128,11 @@ public class FileUploadView implements Serializable {
 
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile files = event.getFile();
-        if (files != null && files.getContent() != null && files.getContent().length > 0
-                && files.getFileName() != null) {
-            String message;
-            byte[] file = event.getFile().getContent();
-            UploadedDocument document = new UploadedDocument();
-            try {
-                // get hash of file
-                document.setHash(TextUtil.SHAsum(file));
-            } catch (NoSuchAlgorithmException e) {
-                message=e.getMessage();
-            }
-
-            List<UploadedDocument> findByHash = documentController.findByHash(document.getHash());
-            // if file doesn't exist
-            if (findByHash.isEmpty()) {
-                message = "Le fichier n'a pas encore été téléversé je le rajoute";
-                this.documents = new ArrayList<ResultSearch>();
-                documentController.findAll().forEach(item->{
-                    ResultSearch tpResultSearch = new ResultSearch(item);
-                    documents.add(tpResultSearch);
-                });
-                document.setContent(file);
-                try {
-                    String fileName = event.getFile().getFileName();
-                    // if file is pdf
-                    if (fileName.endsWith(".pdf")) {
-                        // save file to bucket and get text
-                        BucketUtil.saveToBucket(document.getHash() + fileName, file);
-                        document.setBrut(TextUtil.getTextFromPDF(file));
-
-                    }
-                    // if file is image
-                    else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")) {
-                        // save file to bucket and get text
-                        String text = OcrProcessImage.uploadImageObjectAndGetText(document.getHash() + fileName, file);
-                        document.setBrut(text);
-    
-                    }
-                    document.setFileName(fileName);
-    
-                } catch (IOException e1) {
-                    message=e1.getMessage();
-                }
-                Date dateNow = new Date();
-                document.setDate(dateNow.toString());
-                documentController.save(document);
-                this.documents = new ArrayList<>();
-                documentController.findAll().forEach(item->{
-                    ResultSearch tpResultSearch = new ResultSearch(item);
-                    documents.add(tpResultSearch);
-                });
-        
-            } 
-            // if file already exist
-            else {
-                message = "Le fichier a déja été téléversé je ne fais rien. Nom du fichier:" + document.getFileName();
-            }
- 
-           PrimefaceUtil.info(message);
-
-        }
+        PrimefaceUtil.addMessages(fileUploadService.saveDocument(files));
+        documents = fileUploadService.getAllDocuments();
     }
+    
     public void search() {
-        if (this.searchInput != null && !this.searchInput.isEmpty()) {
-
-            this.documents = new ArrayList<ResultSearch>();
-            documentController.findAll().forEach(item->{
-                ResultSearch tpResultSearch = new ResultSearch(this.searchInput,item);
-                documents.add(tpResultSearch);
-            });
-            Collections.sort(this.documents);
-        }
-        
+        this.documents=fileUploadService.searchDocumentWhithContent(this.searchInput);
     }
 }

@@ -7,51 +7,67 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Document(collection = "vendorInvoice")
-public class VendorInvoice {
+@Document(collection = "transaction")
+public class Transaction {
     @Id
+    @Getter
     private String id;
-    @Indexed
     @Getter @Setter
     private String number;
     @Getter @Setter
-    private Vendor issuer;
+    private String type;
+    @Getter @Setter
+    private String typeDocument;
+    @Getter @Setter
+    private Vendor vendor;
+    @Getter @Setter
+    private Society customer;
     @Getter @Setter
     private List<InvoiceLine> invoiceLines;
     @Getter @Setter
-    private String date_Of_Payment;
-    @Getter @Setter
     private Date payementDate;
+    @Getter @Setter
+    private Date dueDate;
+    @Getter @Setter
+    private String payementStatus;
     @Getter @Setter
     private Date invoiceDate;
     @Getter @Setter
-    private String date_Of_Invoice;
-    @Getter @Setter
     private String payementMethod;
     @Getter @Setter
-    private Rib originPayement; 
+    private Rib originPayement; // Compte débiteur
+    @Getter @Setter
+    private Rib destinationPayement; // Compte créditeur
     @Getter @Setter
     private String refDocument;
+    @Getter @Setter
+    private String refActivite;
     @Getter @Setter @Transient
     private double totalTTC;
     @Getter @Setter @Transient
     private double totalHT;
     @Getter @Setter @Transient
     private double totalTVA;
-    @Getter @Setter @Transient
-    private double totalTVA55;
-    @Getter @Setter @Transient
-    private double totalTVA10;
-    @Getter @Setter @Transient
-    private double totalTVA20;
-    @Setter @Transient
+    @Transient
+    @Getter @Setter
+    private double totalTVAA;
+    @Transient
+    @Getter @Setter
+    private double totalTVAB;
+    @Transient
+    @Getter @Setter
+    private double totalTVAC;
+    @Transient
+    @Getter @Setter
+    private double totalTVAD;
+    @Transient
     private LocalDate invoiceDateC;
+
     public LocalDate getInvoiceDateC() {
         //convert date to localdate
         if(invoiceDate!=null)
@@ -65,25 +81,12 @@ public class VendorInvoice {
         return invoiceDateC;
     }
 
-    public VendorInvoice()
+    public Transaction()
     {
         this.invoiceLines=new ArrayList<InvoiceLine>();
-        this.issuer=new Vendor();
+        this.vendor=new Vendor();
+        this.customer=new Society();
         this.originPayement=new Rib();
+        this.destinationPayement=new Rib();
     }
-
-    @Override
-    public String toString()
-    {        
-        String buffer="";
-        buffer+="Facture n°"+this.number+"\n";
-        buffer+="Reçue le:"+this.date_Of_Invoice+"\n";
-        buffer+="Payée le :"+this.date_Of_Payment+"\n";
-        buffer+=issuer.toString()+"\n";
-        for(InvoiceLine line:invoiceLines)
-        {
-            buffer+=line.toString()+"\n";
-        }
-        return buffer;
-    } 
 }

@@ -46,5 +46,31 @@ public class Society {
         buffer+=address.toString()+"\n";
         buffer+="Téléphone:"+phone+"\n";
         return buffer;
-    }  
+    }
+
+    public int getStrenght()
+    {
+        int strenght=0;
+        if(siret!=null && !siret.isEmpty())
+            strenght+=1;
+        if(siren!=null && !siren.isEmpty())
+            strenght+=1;
+        if(rcs!=null && !rcs.isEmpty())
+            strenght+=1;
+        if(tva_Number!=null && !tva_Number.isEmpty())
+            strenght+=1;
+        if(phone!=null && !phone.isEmpty())
+            strenght+=1;
+        if(name!=null && !name.isEmpty())
+            strenght+=1;
+        if(description!=null && !description.isEmpty())
+            strenght+=1;
+        if(other_Info!=null && !other_Info.isEmpty())
+            strenght+=1;
+        if(contact!=null && !contact.isEmpty())
+            strenght+=1;
+        if(ape!=null && !ape.isEmpty())
+            strenght+=1;
+        return strenght;
+    }
 }

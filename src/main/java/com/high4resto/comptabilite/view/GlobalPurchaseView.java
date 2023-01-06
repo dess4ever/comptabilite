@@ -13,9 +13,8 @@ import org.springframework.web.context.annotation.SessionScope;
 import com.high4resto.comptabilite.dataStruct.Camenbert;
 import com.high4resto.comptabilite.dataStruct.NameValue;
 import com.high4resto.comptabilite.documents.InvoiceLine;
-import com.high4resto.comptabilite.documents.VendorInvoice;
-import com.high4resto.comptabilite.repository.VendorInvoiceRepository;
-import com.high4resto.comptabilite.utils.InvoiceUtil;
+import com.high4resto.comptabilite.documents.Transaction;
+import com.high4resto.comptabilite.services.implementations.TransactionService;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -34,8 +33,9 @@ public class GlobalPurchaseView implements Serializable {
     @Getter @Setter
     private boolean showChart=false;
     @Autowired
-    private VendorInvoiceRepository vendorInvoiceRepository;
-    private List<VendorInvoice> vendorInvoices;
+    private TransactionService transactionService;
+
+    private List<Transaction> transactions;
     @PostConstruct
     public void init() {
     }
@@ -46,16 +46,16 @@ public class GlobalPurchaseView implements Serializable {
         }
         else
         {
-            this.vendorInvoices = vendorInvoiceRepository.findAll();
+            this.transactions = transactionService.getAllTransactions();
             List<NameValue> nameValuesByVendor=new ArrayList<>();
             List<NameValue> nameValuesByCategory=new ArrayList<>();
-            for(VendorInvoice invoice:vendorInvoices)
+            for(Transaction transaction:transactions)
             {
-                InvoiceUtil.calculateTotal(invoice, 2.2, 5.5, 10.0, 20.0);
-                if(invoice.getInvoiceDate().after(range.get(0)) && invoice.getInvoiceDate().before(range.get(1)))
+                transactionService.calculateTotal(transaction);
+                if(transaction.getInvoiceDate().after(range.get(0)) && transaction.getInvoiceDate().before(range.get(1)))
                 {
-                    nameValuesByVendor.add(new NameValue(invoice.getIssuer().getSociety().getName(), invoice.getTotalHT()));
-                    for(InvoiceLine line:invoice.getInvoiceLines())
+                    nameValuesByVendor.add(new NameValue(transaction.getVendor().getSociety().getName(), transaction.getTotalHT()));
+                    for(InvoiceLine line:transaction.getInvoiceLines())
                     {
                         nameValuesByCategory.add(new NameValue(line.getItem().getCategory().getName(), line.getHTtotalPrice()));
                     }

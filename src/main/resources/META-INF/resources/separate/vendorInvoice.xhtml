@@ -1,385 +1,378 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:ui="http://java.sun.com/jsf/facelets">
-    <div class="card">
-        <h:form id="newVendorInvoice">
-            <p:speedDial direction="righ" keepOpen="true">
-                <p:menuitem icon="pi pi-download" title="Générer la facture depuis un document"
-                    action="#{invoice.importInvoice}" update="growl:growl newVendorInvoice" />
-                <p:menuitem icon="pi pi-file-o" title="Remettre à zéro le formulaire" update="newVendorInvoice"
-                    action="#{invoice.newVendorInvoice}" />
-            </p:speedDial>
+    <h:form id="newVendorInvoice">
+        <p:speedDial direction="righ" keepOpen="true">
+            <p:menuitem icon="pi pi-download" title="Générer la facture depuis un document"
+                action="#{invoice.importInvoice}" update="growl:growl newVendorInvoice" />
+            <p:menuitem icon="pi pi-file-o" title="Remettre à zéro le formulaire" update="newVendorInvoice"
+                action="#{invoice.newVendorInvoice}" />
+        </p:speedDial>
 
-            <div class="container mt-5">
-                <p:accordionPanel id="SavedVendorInvoiceTab">
-                    <p:tab title="Factures enregistrées">
-                        <p:dataTable value="#{invoice.vendorInvoices}" var="invoices" widgetVar="savedInvoices"
-                            selection="#{invoice.selectedInvoice}" rowKey="#{invoices.number}"
-                            emptyMessage="Aucune facture enregistrée" selectionMode="single" paginator="true"
-                            paginatorPosition="both" rows="10" filteredValue="#{invoice.filteredInvoice}">
-                            <p:ajax event="rowSelect" listener="#{invoice.onRowSelect}"
-                                update="globalTab:vendorInvoice:newVendorInvoice" />
-                            <p:column headerText="Numéro de facture" sortBy="#{invoices.number}"
-                                filterBy="#{invoices.number}" filterMatchMode="contains">
-                                <h:outputText value="#{invoices.number}" />
-                            </p:column>
-                            <p:column filterBy="#{invoices.invoiceDateC}" sortBy="#{invoices.invoiceDateC}"
-                                headerText="Date de la facture" filterMatchMode="between">
-                                <f:facet name="filter">
-                                    <p:datePicker selectionMode="range" onchange="PF('savedInvoices').filter()"
-                                        pattern="dd/MM/yyyy" />
+        <div class="container mt-5">
+            <p:accordionPanel id="SavedVendorInvoiceTab">
+                <p:tab title="Factures enregistrées">
+                    <p:dataTable value="#{invoice.vendorInvoices}" var="invoices" widgetVar="savedInvoices"
+                        selection="#{invoice.selectedInvoice}" rowKey="#{invoices.number}"
+                        emptyMessage="Aucune facture enregistrée" selectionMode="single" paginator="true"
+                        paginatorPosition="both" rows="10" filteredValue="#{invoice.filteredInvoice}">
+                        <p:ajax event="rowSelect" listener="#{invoice.onRowSelect}"
+                            update="globalTab:vendorInvoice:newVendorInvoice" />
+                        <p:column headerText="Numéro de facture" sortBy="#{invoices.number}"
+                            filterBy="#{invoices.number}" filterMatchMode="contains">
+                            <h:outputText value="#{invoices.number}" />
+                        </p:column>
+                        <p:column filterBy="#{invoices.invoiceDateC}" sortBy="#{invoices.invoiceDateC}"
+                            headerText="Date de la facture" filterMatchMode="between">
+                            <f:facet name="filter">
+                                <p:datePicker selectionMode="range" onchange="PF('savedInvoices').filter()"
+                                    pattern="dd/MM/yyyy" />
+                            </f:facet>
+                            <h:outputText value="#{invoices.invoiceDate}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Paris" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Nom du fournisseur" sortBy="#{invoices.issuer.society.name}"
+                            filterBy="#{invoices.issuer.society.name}" filterMatchMode="contains">
+                            <h:outputText value="#{invoices.issuer.society.name}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:accordionPanel>
+        </div>
+
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center m-5 card-title">Information de facture</h3>
+                </div>
+                <div class="card-body row">
+                    <div class="card col-6">
+                        <div class="card-header">
+                            <h4 class="card-title text-center">Information générales</h4>
+                        </div>
+                        <div class="card-body">
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput" value="#{invoice.newInvoice.number}" />
+                                <p:outputLabel for="@previous" value="Numéro de facture" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:datePicker id="dateVendorInvoice1" class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.invoiceDate}" pattern="dd/MM/yyyy" />
+                                <p:outputLabel for="@previous" value="Date de la facture" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:datePicker id="basic" class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.payementDate}" pattern="dd/MM/yyyy" />
+                                <p:outputLabel for="@previous" value="Date de payement" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput" value="#{invoice.newInvoice.payementMethod}" />
+                                <p:outputLabel for="@previous" value="Moyen de payement" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card col-6">
+                        <div class="card-header">
+                            <h4 class="card-title text-center">Rib du payement</h4>
+                        </div>
+                        <div class="card-body">
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.originPayement.name}" />
+                                <p:outputLabel for="@previous" value="Nom associé au RIB" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.originPayement.bank_Name}" />
+                                <p:outputLabel for="@previous" value="Nom de la banque" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.originPayement.bank_Code}" />
+                                <p:outputLabel for="@previous" value="Code banque" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.originPayement.branch_Code}" />
+                                <p:outputLabel for="@previous" value="Code guichet" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.originPayement.account_Number}" />
+                                <p:outputLabel for="@previous" value="Numéro de comte" />
+                            </span>
+                        </div>
+                        <p:commandButton class="btn btn-primary" value="Ajouter le RIB principal de la société"
+                            icon="pi pi-plus" action="#{invoice.setMyRib}" update="newVendorInvoice" />
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center m-5 card-title">Informations sur le fournisseur</h3>
+                </div>
+                <div class="card-body row">
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <h4 class="card-title text-center">Société</h4>
+                        </div>
+                        <div class="card-body">
+                            <div>
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText class="invoiceCardInput"
+                                        value="#{invoice.newInvoice.issuer.society.name}" />
+                                    <p:outputLabel for="@previous" value="Nom de la société" />
+                                </span>
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText class="invoiceCardInput"
+                                        value="#{invoice.newInvoice.issuer.society.address.name}" />
+                                    <p:outputLabel for="@previous" value="Adresse" />
+                                </span>
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText class="invoiceCardInput"
+                                        value="#{invoice.newInvoice.issuer.society.siret}" />
+                                    <p:outputLabel for="@previous" value="Siret" />
+                                </span>
+                                <p:commandButton class="btn btn-primary invoiceCardInput"
+                                    value="Chercher informations depuis le SIRET"
+                                    actionListener="#{invoice.searchFromSiret}" update="newVendorInvoice growl:growl" />
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText class="invoiceCardInput"
+                                        value="#{invoice.newInvoice.issuer.society.siren}" />
+                                    <p:outputLabel for="@previous" value="Siren" />
+                                </span>
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText class="invoiceCardInput"
+                                        value="#{invoice.newInvoice.issuer.society.rcs}" />
+                                    <p:outputLabel for="@previous" value="RCS" />
+                                </span>
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText class="invoiceCardInput"
+                                        value="#{invoice.newInvoice.issuer.society.tva_Number}" />
+                                    <p:outputLabel for="@previous" value="Numéro de TVA" />
+                                </span>
+                                <span class="ui-float-label mt-3">
+                                    <p:inputText class="invoiceCardInput"
+                                        value="#{invoice.newInvoice.issuer.society.phone}" />
+                                    <p:outputLabel for="@previous" value="Téléphone" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <h4 class="card-title text-center">Rib</h4>
+                        </div>
+                        <div class="card-body">
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput" value="#{invoice.newInvoice.issuer.rib.name}" />
+                                <p:outputLabel for="@previous" value="Nom associé au RIB" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.issuer.rib.bank_Name}" />
+                                <p:outputLabel for="@previous" value="Nom de la banque" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.issuer.rib.bank_Code}" />
+                                <p:outputLabel for="@previous" value="Code banque" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.issuer.rib.branch_Code}" />
+                                <p:outputLabel for="@previous" value="Code guichet" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput"
+                                    value="#{invoice.newInvoice.issuer.rib.account_Number}" />
+                                <p:outputLabel for="@previous" value="Numéro de comte" />
+                            </span>
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput" value="#{invoice.newInvoice.issuer.rib.iban}" />
+                                <p:outputLabel for="@previous" value="IBAN" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <h4 class="card-title text-center">Agréments</h4>
+                        </div>
+                        <div class="card-body">
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput" value="#{invoice.newInvoice.issuer.approval}" />
+                                <p:outputLabel for="@previous" value="Numéro d'agrément" />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center m-5">Produits et services</h3>
+                </div>
+                <div class="card-body">
+                    <p:dataTable id="vendorInvoiceTable" var="line" value="#{invoice.newInvoice.invoiceLines}"
+                        editable="true" selection="#{invoice.selectedLine}" selectionMode="single"
+                        rowKey="#{line.rowKey}">
+
+                        <p:ajax event="rowEdit" listener="#{invoice.onRowEdit}"
+                            update="growl:growl globalTab:vendorInvoice:newVendorInvoice:invoiceTotal" />
+                        <p:ajax event="rowEditCancel" listener="#{invoice.onRowCancel}" update="growl:growl" />
+
+                        <p:column headerText="Nom">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.item.fact_Name}" />
                                 </f:facet>
-                                <h:outputText value="#{invoices.invoiceDate}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Paris" />
-                                </h:outputText>
-                            </p:column>
-                            <p:column headerText="Nom du fournisseur" sortBy="#{invoices.issuer.society.name}"
-                                filterBy="#{invoices.issuer.society.name}" filterMatchMode="contains">
-                                <h:outputText value="#{invoices.issuer.society.name}" />
-                            </p:column>
-                        </p:dataTable>
-                    </p:tab>
-                </p:accordionPanel>
-            </div>
+                                <f:facet name="input">
+                                    <p:inputText value="#{line.item.fact_Name}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
 
-            <div class="container mt-5">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center m-5 card-title">Information de facture</h3>
-                    </div>
-                    <div class="card-body row">
-                        <div class="card col-6">
-                            <div class="card-header">
-                                <h4 class="card-title text-center">Information générales</h4>
-                            </div>
-                            <div class="card-body">
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput" value="#{invoice.newInvoice.number}" />
-                                    <p:outputLabel for="@previous" value="Numéro de facture" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:datePicker id="dateVendorInvoice1" class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.invoiceDate}" pattern="dd/MM/yyyy" />
-                                    <p:outputLabel for="@previous" value="Date de la facture" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:datePicker id="basic" class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.payementDate}" pattern="dd/MM/yyyy" />
-                                    <p:outputLabel for="@previous" value="Date de payement" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.payementMethod}" />
-                                    <p:outputLabel for="@previous" value="Moyen de payement" />
-                                </span>
-                            </div>
-                        </div>
-                        <div class="card col-6">
-                            <div class="card-header">
-                                <h4 class="card-title text-center">Rib du payement</h4>
-                            </div>
-                            <div class="card-body">
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.originPayement.name}" />
-                                    <p:outputLabel for="@previous" value="Nom associé au RIB" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.originPayement.bank_Name}" />
-                                    <p:outputLabel for="@previous" value="Nom de la banque" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.originPayement.bank_Code}" />
-                                    <p:outputLabel for="@previous" value="Code banque" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.originPayement.branch_Code}" />
-                                    <p:outputLabel for="@previous" value="Code guichet" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.originPayement.account_Number}" />
-                                    <p:outputLabel for="@previous" value="Numéro de comte" />
-                                </span>
-                            </div>
-                            <p:commandButton class="btn btn-primary" value="Ajouter le RIB principal de la société"
-                                icon="pi pi-plus" action="#{invoice.setMyRib}" update="newVendorInvoice" />
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center m-5 card-title">Informations sur le fournisseur</h3>
-                    </div>
-                    <div class="card-body row">
-                        <div class="card col-4">
-                            <div class="card-header">
-                                <h4 class="card-title text-center">Société</h4>
-                            </div>
-                            <div class="card-body">
-                                <div>
-                                    <span class="ui-float-label mt-3">
-                                        <p:inputText class="invoiceCardInput"
-                                            value="#{invoice.newInvoice.issuer.society.name}" />
-                                        <p:outputLabel for="@previous" value="Nom de la société" />
-                                    </span>
-                                    <span class="ui-float-label mt-3">
-                                        <p:inputText class="invoiceCardInput"
-                                            value="#{invoice.newInvoice.issuer.society.address.name}" />
-                                        <p:outputLabel for="@previous" value="Adresse" />
-                                    </span>
-                                    <span class="ui-float-label mt-3">
-                                        <p:inputText class="invoiceCardInput"
-                                            value="#{invoice.newInvoice.issuer.society.siret}" />
-                                        <p:outputLabel for="@previous" value="Siret" />
-                                    </span>
-                                    <p:commandButton class="btn btn-primary invoiceCardInput"
-                                        value="Chercher informations depuis le SIRET"
-                                        actionListener="#{invoice.searchFromSiret}"
-                                        update="newVendorInvoice growl:growl" />
-                                    <span class="ui-float-label mt-3">
-                                        <p:inputText class="invoiceCardInput"
-                                            value="#{invoice.newInvoice.issuer.society.siren}" />
-                                        <p:outputLabel for="@previous" value="Siren" />
-                                    </span>
-                                    <span class="ui-float-label mt-3">
-                                        <p:inputText class="invoiceCardInput"
-                                            value="#{invoice.newInvoice.issuer.society.rcs}" />
-                                        <p:outputLabel for="@previous" value="RCS" />
-                                    </span>
-                                    <span class="ui-float-label mt-3">
-                                        <p:inputText class="invoiceCardInput"
-                                            value="#{invoice.newInvoice.issuer.society.tva_Number}" />
-                                        <p:outputLabel for="@previous" value="Numéro de TVA" />
-                                    </span>
-                                    <span class="ui-float-label mt-3">
-                                        <p:inputText class="invoiceCardInput"
-                                            value="#{invoice.newInvoice.issuer.society.phone}" />
-                                        <p:outputLabel for="@previous" value="Téléphone" />
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card col-4">
-                            <div class="card-header">
-                                <h4 class="card-title text-center">Rib</h4>
-                            </div>
-                            <div class="card-body">
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.issuer.rib.name}" />
-                                    <p:outputLabel for="@previous" value="Nom associé au RIB" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.issuer.rib.bank_Name}" />
-                                    <p:outputLabel for="@previous" value="Nom de la banque" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.issuer.rib.bank_Code}" />
-                                    <p:outputLabel for="@previous" value="Code banque" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.issuer.rib.branch_Code}" />
-                                    <p:outputLabel for="@previous" value="Code guichet" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.issuer.rib.account_Number}" />
-                                    <p:outputLabel for="@previous" value="Numéro de comte" />
-                                </span>
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.issuer.rib.iban}" />
-                                    <p:outputLabel for="@previous" value="IBAN" />
-                                </span>
-                            </div>
-                        </div>
-                        <div class="card col-4">
-                            <div class="card-header">
-                                <h4 class="card-title text-center">Agréments</h4>
-                            </div>
-                            <div class="card-body">
-                                <span class="ui-float-label mt-3">
-                                    <p:inputText class="invoiceCardInput"
-                                        value="#{invoice.newInvoice.issuer.approval}" />
-                                    <p:outputLabel for="@previous" value="Numéro d'agrément" />
-                                </span>
-                            </div>
+                        <p:column headerText="Catégorie">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.item.category.name}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:autoComplete value="#{line.item.category.name}" maxResults="10"
+                                        completeMethod="#{invoice.categorySuggestions}" />
+
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Type (produit/service)">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.item.type}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{line.item.type}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Quantité">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.quantity}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{line.quantity}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Prix unitaire hors taxe">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.HTunitPrice}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{line.HTunitPrice}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Prix total hors taxe">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.HTtotalPrice}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{line.HTtotalPrice}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Code TVA">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{line.item.tva.code}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{line.item.tva.code}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column>
+                            <p:rowEditor />
+                        </p:column>
+                    </p:dataTable>
+                    <div class="grid mt-3">
+                        <div class="col-sm">
+                            <p:commandButton value="Ajouter une ligne" icon="pi pi-plus"
+                                actionListener="#{invoice.addInvoiceLine}" update="vendorInvoiceTable" />
                         </div>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center m-5">Produits et services</h3>
-                    </div>
-                    <div class="card-body">
-                        <p:dataTable id="vendorInvoiceTable" var="line" value="#{invoice.newInvoice.invoiceLines}"
-                            editable="true" selection="#{invoice.selectedLine}" selectionMode="single"
-                            rowKey="#{line.rowKey}">
-
-                            <p:ajax event="rowEdit" listener="#{invoice.onRowEdit}"
-                                update="growl:growl globalTab:vendorInvoice:newVendorInvoice:invoiceTotal" />
-                            <p:ajax event="rowEditCancel" listener="#{invoice.onRowCancel}" update="growl:growl" />
-
-                            <p:column headerText="Nom">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{line.item.fact_Name}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputText value="#{line.item.fact_Name}" />
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-
-                            <p:column headerText="Catégorie">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{line.item.category.name}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:autoComplete value="#{line.item.category.name}" maxResults="10"
-                                            completeMethod="#{invoice.categorySuggestions}" />
-
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-
-                            <p:column headerText="Type (produit/service)">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{line.item.type}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputText value="#{line.item.type}" />
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-
-                            <p:column headerText="Quantité">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{line.quantity}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputNumber value="#{line.quantity}" />
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-
-                            <p:column headerText="Prix unitaire hors taxe">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{line.HTunitPrice}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputNumber value="#{line.HTunitPrice}" />
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-                            <p:column headerText="Prix total hors taxe">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{line.HTtotalPrice}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputNumber value="#{line.HTtotalPrice}" />
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-                            <p:column headerText="Code TVA">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{line.item.tva.code}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputText value="#{line.item.tva.code}" />
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-                            <p:column>
-                                <p:rowEditor />
-                            </p:column>
-                        </p:dataTable>
-                        <div class="grid mt-3">
-                            <div class="col-sm">
-                                <p:commandButton value="Ajouter une ligne" icon="pi pi-plus"
-                                    actionListener="#{invoice.addInvoiceLine}" update="vendorInvoiceTable" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <p:commandButton onclick="PF('openAiInvoiceLine').show()" value="Compléter automatiquement"
-                            icon="pi pi-plus" />
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="container mt-5">
-                <div class="card">
-                    <p:panelGrid id="invoiceTotal">
-                        <p:row>
-                            <p:column colspan="3">
-                                <h3 class="text-center">Total</h3>
-                            </p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column>
-                                <h4 class="text-center">Total HT</h4>
-                            </p:column>
-                            <p:column>
-                                <h4 class="text-center">Total TVA</h4>
-                            </p:column>
-                            <p:column>
-                                <h4 class="text-center">Total TTC</h4>
-                            </p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column>
-                                <h:outputText value="#{invoice.totalHT}" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{invoice.totalTVA}" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{invoice.totalTTC}" />
-                            </p:column>
-                        </p:row>
-                    </p:panelGrid>
-                    <p:commandButton value="Recalculer le total" icon="pi pi-refresh"
-                        action="#{invoice.recalculateTotal}" update="invoiceTotal" />
+                <div class="card-footer">
+                    <p:commandButton onclick="PF('openAiInvoiceLine').show()" value="Compléter automatiquement"
+                        icon="pi pi-plus" />
                 </div>
             </div>
-            <div class="card mt-5">
-                <p:commandButton value="Enregistrer la facture" icon="pi pi-save"
-                    actionListener="#{invoice.saveInvoice}"
-                    update="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab growl:growl" />
+
+        </div>
+
+        <div class="container mt-5">
+            <div class="card">
+                <p:panelGrid id="invoiceTotal">
+                    <p:row>
+                        <p:column colspan="3">
+                            <h3 class="text-center">Total</h3>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h4 class="text-center">Total HT</h4>
+                        </p:column>
+                        <p:column>
+                            <h4 class="text-center">Total TVA</h4>
+                        </p:column>
+                        <p:column>
+                            <h4 class="text-center">Total TTC</h4>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{invoice.totalHT}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{invoice.totalTVA}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{invoice.totalTTC}" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:commandButton value="Recalculer le total" icon="pi pi-refresh" action="#{invoice.recalculateTotal}"
+                    update="invoiceTotal" />
             </div>
-            <p:contextMenu for="vendorInvoiceTable" id="vendorInvoiceTableMenu">
-                <p:menuitem value="Supprimer" icon="pi pi-trash" update="newVendorInvoice"
-                    actionListener="#{invoice.deleteInvoiceLine}" />
-            </p:contextMenu>
-            <p:contextMenu for="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab"
-                id="vendorInvoiceTableShowMenu">
-                <p:menuitem value="Supprimer" icon="pi pi-trash"
-                    update="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab growl:growl"
-                    actionListener="#{invoice.deleteInvoice}" />
-            </p:contextMenu>
-            <p:dialog header="Sélection du texte à traiter" widgetVar="openAiInvoiceLine">
-                <p:inputTextarea id="openAiInvoiceLineText" value="#{invoice.textForItem}" rows="30" cols="80"
-                    autoResize="false" />
-                <p:commandButton value="Analyser" icon="pi pi-search"
-                    actionListener="#{invoice.openAiInvoiceLineAnalizer}" oncomplete="PF('openAiInvoiceLine').hide()"
-                    update="globalTab:vendorInvoice:newVendorInvoice:vendorInvoiceTable" />
-            </p:dialog>
-        </h:form>
-    </div>
+        </div>
+        <div class="card mt-5">
+            <p:commandButton value="Enregistrer la facture" icon="pi pi-save" actionListener="#{invoice.saveInvoice}"
+                update="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab growl:growl" />
+        </div>
+        <p:contextMenu for="vendorInvoiceTable" id="vendorInvoiceTableMenu">
+            <p:menuitem value="Supprimer" icon="pi pi-trash" update="newVendorInvoice"
+                actionListener="#{invoice.deleteInvoiceLine}" />
+        </p:contextMenu>
+        <p:contextMenu for="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab"
+            id="vendorInvoiceTableShowMenu">
+            <p:menuitem value="Supprimer" icon="pi pi-trash"
+                update="globalTab:vendorInvoice:newVendorInvoice:SavedVendorInvoiceTab growl:growl"
+                actionListener="#{invoice.deleteInvoice}" />
+        </p:contextMenu>
+        <p:dialog header="Sélection du texte à traiter" widgetVar="openAiInvoiceLine">
+            <p:inputTextarea id="openAiInvoiceLineText" value="#{invoice.textForItem}" rows="30" cols="80"
+                autoResize="false" />
+            <p:commandButton value="Analyser" icon="pi pi-search" actionListener="#{invoice.openAiInvoiceLineAnalizer}"
+                oncomplete="PF('openAiInvoiceLine').hide()"
+                update="globalTab:vendorInvoice:newVendorInvoice:vendorInvoiceTable" />
+        </p:dialog>
+    </h:form>
+
 </ui:composition>

@@ -2,10 +2,11 @@ package com.high4resto.comptabilite.view;
 
 import java.io.Serializable;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
-import com.high4resto.comptabilite.utils.OpenAiUtil;
+import com.high4resto.comptabilite.services.implementations.AiService;
 import com.high4resto.comptabilite.utils.TextUtil;
 
 import lombok.Getter;
@@ -15,7 +16,9 @@ import lombok.Setter;
 @SessionScope
 public class Terminal implements Serializable {
 
-    private OpenAiUtil openAiUtil=new OpenAiUtil();
+    private static final long serialVersionUID = 7198126702926881167L;
+    @Autowired
+    private AiService aiService;
     @Getter @Setter
     private String test="";
 
@@ -31,7 +34,7 @@ public class Terminal implements Serializable {
             {
                 prompt+=acu+" ";
             }
-            return openAiUtil.chat(prompt+"\nIA:");
+            return aiService.chat(prompt+"\nIA:");
         }
         if("C:".equals(command))
         {
@@ -47,6 +50,6 @@ public class Terminal implements Serializable {
 
     public void clear()
     {
-        openAiUtil.reset();
+        aiService.reset();
     }
 }

@@ -21,6 +21,7 @@ import lombok.Setter;
 @SessionScope
 @Component("firstConnection")
 public class FirstConnectionView implements Serializable {
+    private static final long serialVersionUID = -1468804121595417606L;
     @Autowired
     private UserRepository userRepository;
     @Autowired

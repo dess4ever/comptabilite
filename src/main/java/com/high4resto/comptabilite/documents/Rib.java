@@ -41,4 +41,32 @@ public class Rib {
     {
         this.bank_Address=new Address();
     }
+
+    public int getStrenght()
+    {
+        int strenght=0;
+        if(this.bank_Name!=null && !this.bank_Name.isEmpty())
+            strenght++;
+        if(this.bank_Code!=null && !this.bank_Code.isEmpty())
+            strenght++;
+        if(this.branch_Code!=null && !this.branch_Code.isEmpty())
+            strenght++;
+        if(this.account_Number!=null && !this.account_Number.isEmpty())
+            strenght++;
+        if(this.key!=null && !this.key.isEmpty())
+            strenght++;
+        if(this.iban!=null && !this.iban.isEmpty())
+            strenght++;
+        if(this.bic!=null && !this.bic.isEmpty())
+            strenght++;
+        if(this.ics!=null && !this.ics.isEmpty())
+            strenght++;
+        if(this.bank_Address!=null)
+            strenght++;
+        if(this.other_Info!=null && !this.other_Info.isEmpty())
+            strenght++;
+        if(this.order!=null && !this.order.isEmpty())
+            strenght++;
+        return strenght;
+    }
 }

@@ -19,6 +19,7 @@ import lombok.Setter;
 @Component("login")
 @SessionScope
 public class UserLoginView implements Serializable{
+    private static final long serialVersionUID = -1090833621398787682L;
     @Getter @Setter
     private String username;
     @Getter @Setter

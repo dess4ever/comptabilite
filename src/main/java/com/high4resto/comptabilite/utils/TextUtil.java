@@ -80,7 +80,7 @@ public class TextUtil {
 	}
 
 	/* A function for find index of the most nested parenthesis ( */
-	static int indexOfMostNestedRightParenthesis(String entry) {
+	public static int indexOfMostNestedRightParenthesis(String entry) {
 		int index = -1;
 		int count = 0;
 		int max = 0;
@@ -99,7 +99,7 @@ public class TextUtil {
 	}
 
 	/* A function for find index of the most nested parenthesis ( */
-	static int indexOfMostNestedLeftParenthesis(String entry) {
+	public static int indexOfMostNestedLeftParenthesis(String entry) {
 		int index = -1;
 		int count = 0;
 		int max = 0;
