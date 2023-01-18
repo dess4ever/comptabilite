@@ -1,0 +1,307 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:pe="http://primefaces.org/ui/extensions">
+    <div class="container-fluid mt-5">
+        <p:tabView id="filterTab">
+            <p:tab title="Filtre de transactions">
+                <h:form id="transactionFilterForm">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="text-center card-title">Filtres sauvegardés</h4>
+                        </div>
+                        <div class="card-body">
+                            <p:dataTable id="transactionFilterSavedTable" var="filter"
+                                value="#{transactionFilterView.transactionFilters}">
+                                <p:column>
+                                    <h:outputText value="#{filter.name}" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="pi pi-pencil"
+                                        action="#{transactionFilterView.editFilter(filter)}"
+                                        update="growl:growl globalTab:filterTab:transactionFilterForm" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="pi pi-trash"
+                                        action="#{transactionFilterView.deleteFilter(filter)}"
+                                        update="growl:growl globalTab:filterTab:transactionFilterForm" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                    <div class="card mt-5">
+                        <div class="card-header">
+                            <h4 class="text-center card-title">Filtre en cours</h4>
+                        </div>
+                        <div class="card-body">
+                            <h:panelGroup id="toUpdate">
+                                <span class="ui-float-label">
+                                    <p:inputText class="invoiceCardInput"
+                                        value="#{transactionFilterView.transactionFilter.name}" />
+                                    <label for="@previous">Nom du filtre</label>
+                                </span>
+                                <hr />
+                                <ui:repeat value="#{transactionFilterView.transactionFilter.filters}" var="filters"
+                                    varStatus="status">
+                                    <ui:repeat value="#{filters}" var="filter" varStatus="statusBis">
+                                        <div class="row">
+                                            <p:selectOneMenu class="col-3 mt-3" value="#{filter.key}">
+                                                <f:selectItem itemLabel="Sélectionnez le champ" itemValue="" />
+                                                <f:selectItems
+                                                    value="#{transactionFilterView.componentsSelectionTransaction}" />
+                                            </p:selectOneMenu>
+                                            <p:selectOneMenu class="col-3 mt-3" value="#{filter.operator}">
+                                                <f:selectItem itemLabel="Egal" itemValue="equals" />
+                                                <f:selectItem itemLabel="Contient" itemValue="contains" />
+                                                <f:selectItem itemLabel="Plus grand que" itemValue="greaterThan" />
+                                                <f:selectItem itemLabel="Plus petit que" itemValue="lessThan" />
+                                                <f:selectItem itemLabel="Autre que" itemValue="not" />
+                                            </p:selectOneMenu>
+                                            <span class="ui-float-label col-3 mt-3">
+                                                <p:inputText class="invoiceCardInput" value="#{filter.value}" />
+                                                <label for="@previous">Valeur</label>
+                                            </span>
+                                            <p:commandButton class="col-3 mt-3" icon="pi pi-trash"
+                                                action="#{transactionFilterView.removeFilter(status.index,statusBis.index)}"
+                                                update="globalTab:filterTab:transactionFilterForm" />
+                                        </div>
+                                        <h:panelGroup rendered="#{!statusBis.last}">
+                                            <h4 class="text-center">Ou</h4>
+                                        </h:panelGroup>
+                                    </ui:repeat>
+                                    <p:commandButton class="col-3 mt-3" icon="pi pi-plus" value="Ou ajouter"
+                                        action="#{transactionFilterView.addOrFilter(status.index)}"
+                                        update="globalTab:filterTab:transactionFilterForm" />
+                                    <hr />
+                                    <h:panelGroup rendered="#{!status.last}">
+                                        <h4 class="text-center">Et</h4>
+                                        <hr />
+                                    </h:panelGroup>
+                                </ui:repeat>
+                                <p:commandButton class="col-3" icon="pi pi-plus" value="Et ajouter"
+                                    action="#{transactionFilterView.addFilter}" update="transactionFilterForm" />
+                                <hr />
+                            </h:panelGroup>
+                            <div class="row mt-5">
+                                <h4 class="text-center">Mini filtre en cours</h4>
+                                <p:selectOneMenu class="col-4" value="#{transactionFilterView.currentFilter.key}">
+                                    <f:selectItem itemLabel="Sélectionnez le champ" itemValue="" />
+                                    <f:selectItems value="#{transactionFilterView.componentsSelectionTransaction}" />
+                                    <p:ajax event="itemSelect"
+                                        listener="#{transactionFilterView.onItemSelectedListener}" />
+
+                                </p:selectOneMenu>
+                                <p:selectOneMenu class="col-4" value="#{transactionFilterView.currentFilter.operator}">
+                                    <f:selectItem itemLabel="Sélectionnez l'opérateur" itemValue="" />
+                                    <f:selectItem itemLabel="Egal" itemValue="equals" />
+                                    <f:selectItem itemLabel="Contient" itemValue="contains" />
+                                    <f:selectItem itemLabel="Plus grand que" itemValue="greaterThan" />
+                                    <f:selectItem itemLabel="Plus petit que" itemValue="lessThan" />
+                                    <f:selectItem itemLabel="Autre que" itemValue="not" />
+                                </p:selectOneMenu>
+                                <span class="ui-float-label col-4">
+                                    <p:autoComplete completeMethod="#{transactionFilterView.complete}"
+                                        class="invoiceCardInput" value="#{transactionFilterView.currentFilter.value}">
+                                    </p:autoComplete>
+                                    <label for="@previous">Valeur</label>
+                                </span>
+                            </div>
+                            <hr />
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <p:commandButton class="col-3 mt-3" value="Tester" icon="pi pi-search"
+                                    action="#{transactionFilterView.testFilter}"
+                                    update="globalTab:filterTab:transactionFilterForm" />
+                                <p:commandButton class="col-3 mt-3" value="Sauvegarder" icon="pi pi-save"
+                                    action="#{transactionFilterView.save}"
+                                    update="globalTab:filterTab:transactionFilterForm" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-5">
+                        <div class="card-header">
+                            <h4 class="text-center card-title">Test du filtre</h4>
+                        </div>
+                        <div class="card-body">
+                            <p:dataTable value="#{transactionFilterView.transactions}" var="transaction">
+                                <p:column headerText="Numéro de transaction">
+                                    <h:outputText value="#{transaction.number}" />
+                                </p:column>
+                                <p:column headerText="Activitée liée">
+                                    <h:outputText value="#{transaction.refActivite}" />
+                                </p:column>
+                                <p:column headerText="Type de transaction">
+                                    <h:outputText value="#{transaction.type}" />
+                                </p:column>
+                                <p:column headerText="Type de document">
+                                    <h:outputText value="#{transaction.typeDocument}" />
+                                </p:column>
+                                <p:column headerText="Date du payement">
+                                    <h:outputText value="#{transaction.payementDate}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Paris" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Date du document">
+                                    <h:outputText value="#{transaction.invoiceDate}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Paris" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Compte débité">
+                                    <h:outputText value="#{transaction.originPayement.name}" />
+                                </p:column>
+                                <p:column headerText="Compte crédité">
+                                    <h:outputText value="#{transaction.destinationPayement.name}" />
+                                </p:column>
+                                <p:column headerText="Nom du vendeur">
+                                    <h:outputText value="#{transaction.vendor.society.name}" />
+                                </p:column>
+                                <p:column headerText="Nom de l'acheteur">
+                                    <h:outputText value="#{transaction.customer.name}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </h:form>
+            </p:tab>
+            <p:tab title="Filtre d'items">
+                <h:form id="ItemFilterForm">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="text-center card-title">Filtres sauvegardés</h4>
+                        </div>
+                        <div class="card-body">
+                            <p:dataTable id="ItemFilterSavedTable" var="filter" value="#{itemFilterView.itemFilters}">
+                                <p:column>
+                                    <h:outputText value="#{filter.name}" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="pi pi-pencil" action="#{itemFilterView.editFilter(filter)}"
+                                        update="growl:growl globalTab:filterTab:ItemFilterForm" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="pi pi-trash" action="#{itemFilterView.deleteFilter(filter)}"
+                                        update="growl:growl globalTab:filterTab:ItemFilterForm" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                    <div class="card mt-5">
+                        <div class="card-header">
+                            <h4 class="text-center card-title">Filtre en cours</h4>
+                        </div>
+                        <div class="card-body">
+                            <h:panelGroup id="toUpdate2">
+                                <span class="ui-float-label">
+                                    <p:inputText class="invoiceCardInput" value="#{itemFilterView.itemFilter.name}" />
+                                    <label for="@previous">Nom du filtre</label>
+                                </span>
+                                <hr />
+                                <ui:repeat value="#{itemFilterView.itemFilter.filters}" var="filters"
+                                    varStatus="status">
+                                    <ui:repeat value="#{filters}" var="filter" varStatus="statusBis">
+                                        <div class="row">
+                                            <p:selectOneMenu class="col-3 mt-3" value="#{filter.key}">
+                                                <f:selectItem itemLabel="Sélectionnez le champ" itemValue="" />
+                                                <f:selectItems value="#{itemFilterView.componentsSelectionItem}" />
+                                            </p:selectOneMenu>
+                                            <p:selectOneMenu class="col-3 mt-3" value="#{filter.operator}">
+                                                <f:selectItem itemLabel="Egal" itemValue="equals" />
+                                                <f:selectItem itemLabel="Contient" itemValue="contains" />
+                                                <f:selectItem itemLabel="Plus grand que" itemValue="greaterThan" />
+                                                <f:selectItem itemLabel="Plus petit que" itemValue="lessThan" />
+                                                <f:selectItem itemLabel="Autre que" itemValue="not" />
+                                            </p:selectOneMenu>
+                                            <span class="ui-float-label col-3 mt-3">
+                                                <p:inputText class="invoiceCardInput" value="#{filter.value}" />
+                                                <label for="@previous">Valeur</label>
+                                            </span>
+                                            <p:commandButton class="col-3 mt-3" icon="pi pi-trash"
+                                                action="#{itemFilterView.removeFilter(status.index,statusBis.index)}"
+                                                update="globalTab:filterTab:ItemFilterForm" />
+                                        </div>
+                                        <h:panelGroup rendered="#{!statusBis.last}">
+                                            <h4 class="text-center">Ou</h4>
+                                        </h:panelGroup>
+                                    </ui:repeat>
+                                    <p:commandButton class="col-3 mt-3" icon="pi pi-plus" value="Ou ajouter"
+                                        action="#{itemFilterView.addOrFilter(status.index)}"
+                                        update="globalTab:filterTab:ItemFilterForm" />
+                                    <hr />
+                                    <h:panelGroup rendered="#{!status.last}">
+                                        <h4 class="text-center">Et</h4>
+                                        <hr />
+                                    </h:panelGroup>
+                                </ui:repeat>
+                                <p:commandButton class="col-3" icon="pi pi-plus" value="Et ajouter"
+                                    action="#{itemFilterView.addFilter}" update="ItemFilterForm" />
+                                <hr />
+                            </h:panelGroup>
+                            <div class="row mt-5">
+                                <h4 class="text-center">Mini filtre en cours</h4>
+                                <p:selectOneMenu class="col-4" value="#{itemFilterView.currentFilter.key}">
+                                    <f:selectItem itemLabel="Sélectionnez le champ" itemValue="" />
+                                    <f:selectItems value="#{itemFilterView.componentsSelectionItem}" />
+                                    <p:ajax event="itemSelect" listener="#{itemFilterView.onItemSelectedListener}" />
+
+                                </p:selectOneMenu>
+                                <p:selectOneMenu class="col-4" value="#{itemFilterView.currentFilter.operator}">
+                                    <f:selectItem itemLabel="Sélectionnez l'opérateur" itemValue="" />
+                                    <f:selectItem itemLabel="Egal" itemValue="equals" />
+                                    <f:selectItem itemLabel="Contient" itemValue="contains" />
+                                    <f:selectItem itemLabel="Plus grand que" itemValue="greaterThan" />
+                                    <f:selectItem itemLabel="Plus petit que" itemValue="lessThan" />
+                                    <f:selectItem itemLabel="Autre que" itemValue="not" />
+                                </p:selectOneMenu>
+                                <span class="ui-float-label col-4">
+                                    <p:autoComplete completeMethod="#{itemFilterView.complete}" class="invoiceCardInput"
+                                        value="#{itemFilterView.currentFilter.value}">
+                                    </p:autoComplete>
+                                    <label for="@previous">Valeur</label>
+                                </span>
+                            </div>
+                            <hr />
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <p:commandButton class="col-3 mt-3" value="Tester" icon="pi pi-search"
+                                    action="#{itemFilterView.testFilter}" update="globalTab:filterTab:ItemFilterForm" />
+                                <p:commandButton class="col-3 mt-3" value="Sauvegarder" icon="pi pi-save"
+                                    action="#{itemFilterView.save}" update="globalTab:filterTab:ItemFilterForm" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-5">
+                        <div class="card-header">
+                            <h4 class="text-center card-title">Test du filtre</h4>
+                        </div>
+                        <div class="card-body">
+                            <p:dataTable value="#{itemFilterView.invoiceLines}" var="itemFilter">
+                                <p:column headerText="Nom de l'item">
+                                    <h:outputText value="#{itemFilter.item.fact_Name}" />
+                                </p:column>
+                                <p:column headerText="Nom de la catégorie">
+                                    <h:outputText value="#{itemFilter.item.category.name}" />
+                                </p:column>
+                                <p:column headerText="Quantité">
+                                    <h:outputText value="#{itemFilter.quantity}" />
+                                </p:column>
+                                <p:column headerText="Prix unitaire">
+                                    <h:outputText value="#{itemFilter.HTunitPrice}" />
+                                </p:column>
+                                <p:column headerText="Prix total hors taxe">
+                                    <h:outputText value="#{itemFilter.HTtotalPrice}" />
+                                </p:column>
+                                <p:column headerText="Taux de TVA">
+                                    <h:outputText value="#{itemFilter.item.tva.value}" />
+                                </p:column>
+                                <p:column headerText="Code TVA">
+                                    <h:outputText value="#{itemFilter.item.tva.code}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </h:form>
+            </p:tab>
+        </p:tabView>
+    </div>
+</ui:composition>

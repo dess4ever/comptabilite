@@ -58,6 +58,7 @@ public class FileUploadView implements Serializable {
 
     public void onRowSelect(SelectEvent<ResultSearch> event) {
         this.selectDocument = event.getObject();
+        PrimefaceUtil.info("Document sélectionné "+this.selectDocument.getDocument().getFileName());
     }
 
     public void onRowEdit(RowEditEvent<ResultSearch> event) {

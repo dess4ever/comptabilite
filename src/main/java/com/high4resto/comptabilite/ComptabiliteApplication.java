@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ComptabiliteApplication implements CommandLineRunner {
-	private final Logger logger = LoggerFactory.getLogger(ComptabiliteApplication.class);
+	private final Logger logger = LoggerFactory.getLogger(ComptabiliteApplication.class);;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ComptabiliteApplication.class, args);

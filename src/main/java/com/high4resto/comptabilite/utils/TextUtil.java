@@ -3,6 +3,7 @@ package com.high4resto.comptabilite.utils;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,6 +39,28 @@ public class TextUtil {
 		return index;
 	}
 
+	// Verify if a string is a date dd/MM/yyyy
+	public static boolean testIfStringIsDateddMMyyyy(String date){
+        try{
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            dateFormat.parse(date);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+	// Verify if a string is a number
+	public static boolean testIfStringIsNumber(String numString)
+	{
+		try{
+			Double.parseDouble(numString);
+			return true;
+		}catch(Exception e){
+			return false;
+		}
+	}
+
 	/* Create a java function like String.indexOf but with regex and start index */
 	public static int indexOf(String entry, String regex, int startIndex) {
 		int index = -1;
@@ -59,7 +82,30 @@ public class TextUtil {
 		}
 		return index;
 	}
+	// Convert string date to date dd/MM/yyyy
+	public static Date convertStringddMMyyyyToDate(String date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			return formatter.parse(date);
+		} catch (ParseException e) {
+		}
+		return null;
+	} 
 
+	// Convert string date to Date yyyy-MM-dd
+	public static Date convertStringyyyyMMToDate(String date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			return formatter.parse(date);
+		} catch (ParseException e) {
+		}
+		return null;
+	}
+
+	// Remove new line from a string and replace it with a space
+	public static String removeNewLine(String entry) {
+		return entry.replaceAll("\\r|\\n", " ");
+	}
 	 // Get random string[length]
 	public static String getRandomString(int length)
 	{

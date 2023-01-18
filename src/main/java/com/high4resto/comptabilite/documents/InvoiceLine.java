@@ -42,7 +42,7 @@ public class InvoiceLine {
     @Override
     public String toString()
     {
-       return this.item.getCategory().getName()+"\t"+ this.item.getName()+" QTY:"+this.getQuantity()+" Prix unitaire HT:"+this.HTunitPrice+" Prix total HT:"+this.HTtotalPrice+" TVA:"+this.item.getTva().getCode(); 
+       return this.item.getCategory().getName()+"\t"+ this.item.getFact_Name()+" QTY:"+this.getQuantity()+" Prix unitaire HT:"+this.HTunitPrice+" Prix total HT:"+this.HTtotalPrice+" TVA:"+this.item.getTva().getCode(); 
     }
     
 }

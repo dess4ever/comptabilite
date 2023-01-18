@@ -31,7 +31,7 @@ public class AiService {
         .presencePenalty(0.6)
         .bestOf(1)
         .echo(true)
-        .maxTokens(1024)
+        .maxTokens(2048)
         .user("testing")
         .build();
 
@@ -52,13 +52,13 @@ public class AiService {
         String reponse="";
         Society tpSociety=new Society();
         prompt+="\n\n";
-        prompt+="| Nom de la société | Siret | Adresse | Téléphone | DateFacture |  \n\n";
+        prompt+="| Nom de la société | Adresse en une ligne |  \n\n";
         CompletionRequest completionRequest = CompletionRequest.builder()
 		.model("text-davinci-003")
 		.prompt(prompt)
 		.temperature(0.0)
 		.frequencyPenalty(0.0)
-		.maxTokens(500)
+		.maxTokens(2048)
 		.topP(1.0)
 		.echo(true)
 		.user("testing")
@@ -85,7 +85,7 @@ public class AiService {
         .presencePenalty(0.6)
         .bestOf(1)
         .echo(true)
-        .maxTokens(1024)
+        .maxTokens(2048)
         .user("testing")
         .build();
 
@@ -103,7 +103,7 @@ public class AiService {
 
     public void reset()
     {
-        chatAccumulator="Ce qui suit est une conversation avec un assistant d'IA. L'assistant est serviable et pragmatique. L'assistant est un expert en comptabilités. Il n'aime pas répondre aux questions autres que sur la comptabilité. \nHuman: Hello, qui es-tu?\nAI:  Je suis une IA créée par OpenAI. Comment puis-je vous aider aujourd'hui ?\nHuman:";
+        chatAccumulator="Ce qui suit est une conversation avec un assistant d'IA. L'assistant est serviable et pragmatique et évite de donné des liens web. L'assistant est un expert en comptabilités. Il n'aime pas répondre aux questions autres que sur la comptabilité. \nHuman: Hello, qui es-tu?\nAI:  Je suis une IA créée par OpenAI. Comment puis-je vous aider aujourd'hui ?\nHuman:";
     }
 
     @PostConstruct
@@ -114,6 +114,6 @@ public class AiService {
         this.stopSequence.add("Human");
         this.stopSequence.add("AI:");
         oAIservice = new OpenAiService(token,60);
-        chatAccumulator="Ce qui suit est une conversation avec un assistant d'IA. L'assistant est serviable et pragmatique. L'assistant est un expert en comptabilités. Il n'aime pas répondre aux questions autres que sur la comptabilité. \nHuman: Hello, qui es-tu?\nAI:  Je suis une IA créée par OpenAI. Comment puis-je vous aider aujourd'hui ?\nHuman:";
+        chatAccumulator="Ce qui suit est une conversation avec un assistant d'IA. L'assistant est serviable et pragmatique et évite de donné des liens web. L'assistant est un expert en comptabilités. Il n'aime pas répondre aux questions autres que sur la comptabilité. \nHuman: Hello, qui es-tu?\nAI:  Je suis une IA créée par OpenAI. Comment puis-je vous aider aujourd'hui ?\nHuman:";
     }
 }

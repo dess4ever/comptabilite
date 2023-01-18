@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:pe="http://primefaces.org/ui/extensions">
     <h:form id="transaction">
         <div class="container-fluid mt-5">
             <p:accordionPanel id="savedTransactions">
@@ -15,12 +16,12 @@
                             filterBy="#{transaction.refActivite}" filterMatchMode="contains">
                             <h:outputText value="#{transaction.refActivite}" />
                         </p:column>
-                        <p:column headerText="Numéro de transaction" sortBy="#{transaction.number}"
+                        <p:column headerText="Numéro de document" sortBy="#{transaction.number}"
                             filterBy="#{transaction.number}" filterMatchMode="contains">
                             <h:outputText value="#{transaction.number}" />
                         </p:column>
                         <p:column filterBy="#{transaction.invoiceDateC}" sortBy="#{transaction.invoiceDateC}"
-                            headerText="Date de la transaction" filterMatchMode="between">
+                            headerText="Date du document" filterMatchMode="between">
                             <f:facet name="filter">
                                 <p:datePicker selectionMode="range" onchange="PF('savedTransactions').filter()"
                                     pattern="dd/MM/yyyy" />
@@ -80,22 +81,22 @@
                                     <div class="card-body">
                                         <span class="ui-float-label mt-3">
                                             <p:autoComplete class="invoiceCardInput"  value="#{transactionView.currentTransaction.payementStatus}" completeMethod="#{transactionView.completeStatusOfPayement}" />
-                                            <p:outputLabel for="@previous" value="Statut du payement" />
+                                            <p:outputLabel for="@previous" value="Statut de paiement" />
                                         </span>
                                         <span class="ui-float-label mt-3">
                                             <p:datePicker class="w-100"
                                             value="#{transactionView.currentTransaction.dueDate}" pattern="dd/MM/yyyy" />
-                                            <p:outputLabel for="@previous" value="Date limite" />                                   
+                                            <p:outputLabel for="@previous" value="Date d'échéance" />                                   
                                         </span>
                                         <span class="ui-float-label mt-3">
                                             <p:datePicker class="w-100"
                                                 value="#{transactionView.currentTransaction.payementDate}" pattern="dd/MM/yyyy" />
-                                            <p:outputLabel for="@previous" value="Date de payement" />
+                                            <p:outputLabel for="@previous" value="Date de paiement" />
                                         </span>
             
                                         <span class="ui-float-label mt-3">
                                             <p:inputText class="w-100" value="#{transactionView.currentTransaction.payementMethod}" />
-                                            <p:outputLabel for="@previous" value="Moyen de payement" />
+                                            <p:outputLabel for="@previous" value="Méthode de payement" />
                                         </span>                           
                                     </div>
                                 </div>
@@ -140,7 +141,12 @@
                                                 <p:inputText class="invoiceCardInput"
                                                     value="#{transactionView.currentTransaction.destinationPayement.iban}" />
                                                 <p:outputLabel for="@previous" value="Numéro IBAN" />
-                                            </span>                                        
+                                            </span>
+                                            <span class="ui-float-label mt-3">
+                                                <p:inputText class="invoiceCardInput"
+                                                    value="#{transactionView.currentTransaction.destinationPayement.bic}" />
+                                                <p:outputLabel for="@previous" value="Numéro BIC" />
+                                            </span>                                    
                                         </div>
                                         <div class="card-footer">
                                             <p:commandButton class="btn btn-primary w-100" value="Ajouter le compte de la société" icon="pi pi-plus" 
@@ -186,6 +192,11 @@
                                                 <p:inputText class="invoiceCardInput"
                                                     value="#{transactionView.currentTransaction.originPayement.iban}" />
                                                 <p:outputLabel for="@previous" value="Numéro IBAN" />
+                                            </span>
+                                            <span class="ui-float-label mt-3">
+                                                <p:inputText class="invoiceCardInput"
+                                                    value="#{transactionView.currentTransaction.originPayement.bic}" />
+                                                <p:outputLabel for="@previous" value="Numéro BIC" />
                                             </span>                                                               
                                         </div>
                                         <div class="card-footer">
@@ -201,7 +212,7 @@
                                 <div class="card col-6">
                                     <p:panel id="vendorForm">
                                         <div class="card-header">
-                                            <h4 class="card-title text-center">Vendeur</h4>
+                                            <h4 class="card-title text-center">Fournisseur</h4>
                                         </div>
                                         <div class="card-body">
                                             <span class="ui-float-label mt-3">
@@ -325,7 +336,11 @@
                                                     <h:outputText value="#{line.item.fact_Name}" />
                                                 </f:facet>
                                                 <f:facet name="input">
-                                                    <p:inputText value="#{line.item.fact_Name}" />
+                                                    <p:autoComplete value="#{line.item.fact_Name}" completeMethod="#{transactionView.completeItemName}" >
+                                                        <f:attribute name="currentLine" value="#{line}" />
+                                                        <p:ajax event="itemSelect" listener="#{transactionView.onItemForInvoiceLineSelect}" update="transactionLineTable">
+                                                        </p:ajax>
+                                                    </p:autoComplete>
                                                 </f:facet>
                                             </p:cellEditor>
                                         </p:column>
@@ -336,7 +351,7 @@
                                                     <h:outputText value="#{line.item.category.name}" />
                                                 </f:facet>
                                                 <f:facet name="input">
-                                                    <p:autoComplete value="#{line.item.category.name}" maxResults="10"
+                                                    <p:autoComplete value="#{line.item.category.name}" scrollHeight="250" 
                                                         completeMethod="#{transactionView.completeCategoryItem}" />
                 
                                                 </f:facet>
@@ -399,17 +414,17 @@
                                             <p:rowEditor />
                                         </p:column>
                                     </p:dataTable>
-                                    <div class="grid mt-3">
+                                    <div class="row mt-3">
                                         <div class="col-sm">
-                                            <p:commandButton value="Ajouter une ligne" icon="pi pi-plus"
+                                            <p:commandButton class="invoiceCardInput" value="Ajouter une ligne" icon="pi pi-plus"
                                                 actionListener="#{transactionView.addTransactionLine}" update="transactionLineTable" />
+                                        </div>
+                                        <div class="col-sm">
+                                            <p:commandButton class="invoiceCardInput" onclick="PF('openAiInvoiceLine').show()" value="Compléter automatiquement"
+                                            icon="pi pi-plus" />    
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer">
-                                    <p:commandButton onclick="PF('openAiInvoiceLine').show()" value="Compléter automatiquement"
-                                        icon="pi pi-plus" />
-                                </div>                                
                             </div>
                             <div class="card">
                                 <p:panelGrid id="invoiceTotal">
@@ -449,13 +464,24 @@
                 </p:tab>
             </p:accordionPanel>
         </div>
-        <p:dialog header="Sélection du texte à traiter" id="openAiInvoiceLine" widgetVar="openAiInvoiceLine">
-            <p:inputTextarea id="openAiInvoiceLineText" value="#{transactionView.textForItem}" rows="30" cols="80"
-                autoResize="false" />
-            <p:commandButton value="Analyser" icon="pi pi-search" actionListener="#{transactionView.openAiInvoiceLineAnalizer}"
-                oncomplete="PF('openAiInvoiceLine').hide()"
-                update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable" />
+
+        <p:dialog header="Complétion automatique" id="openAiInvoiceLine" widgetVar="openAiInvoiceLine">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Texte à traiter</h3>
+                </div>
+                <div class="card-body">
+                    <p:inputTextarea id="openAiInvoiceLineText" value="#{transactionView.textForItem}" rows="20" cols="100"
+                        autoResize="false" />
+                </div>
+                <div class="card-footer">
+                    <p:commandButton class="invoiceCardInput" value="Analyser" icon="pi pi-search" actionListener="#{transactionView.openAiInvoiceLineAnalizer}"
+                    oncomplete="PF('openAiInvoiceLine').hide()"
+                    update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable" />    
+                </div>
+            </div>
         </p:dialog>
+
         <p:contextMenu for="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable" id="vendorInvoiceTableMenu">
             <p:menuitem value="Supprimer" icon="pi pi-trash" update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable"
                 actionListener="#{transactionView.deleteTransactionLine}" />

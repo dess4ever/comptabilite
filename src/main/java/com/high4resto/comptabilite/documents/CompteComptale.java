@@ -7,23 +7,23 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Document
-public class UploadedDocument {
-    @Id @Getter @Setter
+public class CompteComptale {
+    @Id
     private String id;
     @Getter @Setter
-    private String fileName;
+    @Indexed(unique = true)
+    private String code;
     @Getter @Setter
-    private String type;
+    private String libelle;
+    @Getter @Setter
+    private String contrepartie;
     @Getter @Setter
     private String description;
-    @Getter @Setter @Indexed(unique = true)
-    private String hash;
     @Getter @Setter
-    private byte[] content;
+    private String example;
     @Getter @Setter
-    private String date;
+    private boolean isDebit;
     @Getter @Setter
-    private String brut;
+    private boolean isTerminate;
 }

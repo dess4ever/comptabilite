@@ -58,11 +58,17 @@ public class TreeDictionnary {
             }
             List<Mot> list = new ArrayList<Mot>();
             parcoureur.toList(list);
-            Collections.sort(list);
+            try
+            {
+                Collections.sort(list);
+            }
+            catch (Exception e) {
+           }
             int limite = list.size();
             if (limite > size)
                 limite = size;
             for (int i = 0; i < limite; i++) {
+                if(list.get(i)!=null)
                 liste.add(list.get(i).getMot());
             }
         }

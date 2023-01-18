@@ -11,7 +11,7 @@ public class Tva {
     @Id
     private String id;
     @Getter @Setter
-    private String code;
+    private String code="x";
     @Getter @Setter
     private double value;
     @Getter @Setter

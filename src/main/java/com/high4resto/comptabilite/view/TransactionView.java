@@ -15,8 +15,11 @@ import org.springframework.web.context.annotation.SessionScope;
 import com.high4resto.comptabilite.dataStruct.TreeDictionnary;
 import com.high4resto.comptabilite.documents.InvoiceLine;
 import com.high4resto.comptabilite.documents.Transaction;
+import com.high4resto.comptabilite.documents.Tva;
+import com.high4resto.comptabilite.repository.TvaRepository;
 import com.high4resto.comptabilite.services.implementations.SirenApiService;
 import com.high4resto.comptabilite.services.implementations.TransactionService;
+import com.high4resto.comptabilite.utils.MathUtil;
 import com.high4resto.comptabilite.utils.PrimefaceUtil;
 
 import jakarta.annotation.PostConstruct;
@@ -35,6 +38,8 @@ public class TransactionView implements Serializable{
     private SirenApiService sirenApiService;
     @Autowired 
     private FileUploadView documentView;
+    @Autowired
+    private TvaRepository tvaRepository;
 
     @Getter @Setter
     private Date FilterDateBegin;
@@ -103,10 +108,18 @@ public class TransactionView implements Serializable{
     }
 
     public List<String> completeLinkedActyvity(String query) {
+        if(query.equals(" "))
+        {
+            return treeDictionnary.get("linkedActivity").getAll();
+        }
         return treeDictionnary.get("linkedActivity").getList(query, 10);
     }
 
     public List<String> completeTypeDocument(String query) {
+        if(query.equals(" "))
+        {
+            return treeDictionnary.get("linkedActivity").getAll();
+        }
         return treeDictionnary.get("typeDocument").getList(query, 10);
     }
 
@@ -115,19 +128,43 @@ public class TransactionView implements Serializable{
     }
 
     public List<String> completeStatusOfPayement(String query) {
+        if(query.equals(" "))
+        {
+            return treeDictionnary.get("linkedActivity").getAll();
+        }
         return treeDictionnary.get("statusOfPayement").getList(query, 10);
     }
 
     public List<String> completeAccountName(String query) {
+        if(query.equals(" "))
+        {
+            return treeDictionnary.get("linkedActivity").getAll();
+        }
         return treeDictionnary.get("accountName").getList(query, 10);
     }
 
     public List<String> completeSocietyName(String query) {
+        if(query.equals(" "))
+        {
+            return treeDictionnary.get("linkedActivity").getAll();
+        }
         return treeDictionnary.get("societyName").getList(query, 10);
     }
 
     public List<String> completeCategoryItem(String query) {
+        if(query.equals(" "))
+        {
+            return treeDictionnary.get("ItemCategory").getAll();
+        }
         return treeDictionnary.get("ItemCategory").getList(query, 10);
+    }
+
+    public List<String> completeItemName(String query) {
+        if(query.equals(" "))
+        {
+            return transactionService.getTreeDictionnaryItem(this.currentTransaction.getVendor().getSociety().getName()).getAll();
+        }
+        return transactionService.getTreeDictionnaryItem(this.currentTransaction.getVendor().getSociety().getName()).getList(query, 10);
     }
                 
     public void onCreditedAccountSelect(SelectEvent<String> event)
@@ -149,6 +186,15 @@ public class TransactionView implements Serializable{
     {
         currentTransaction.setCustomer(transactionService.getSociety(event.getObject()));
     }
+    public void onItemForInvoiceLineSelect(SelectEvent<String> event)
+    {
+        InvoiceLine tplLine= transactionService.getItemDictionnaryBySociety().get(currentTransaction.getVendor().getSociety().getName()).get(event.getObject());
+        InvoiceLine currentLine=(InvoiceLine)event.getComponent().getAttributes().get("currentLine");
+        currentLine.getItem().setCategory(tplLine.getItem().getCategory());
+        currentLine.setHTunitPrice(tplLine.getHTunitPrice());
+        currentLine.getItem().setTva(tplLine.getItem().getTva());
+        currentLine.getItem().setType(tplLine.getItem().getType());
+    }
 
     public void searchFromSiret()
     {
@@ -167,7 +213,7 @@ public class TransactionView implements Serializable{
 
     public void fromDocument()
     {
-        this.currentTransaction=transactionService.importTransaction(documentView.getSelectDocument().getDocument().getBrut());
+        this.currentTransaction=transactionService.importInvoiceTransaction(documentView.getSelectDocument().getDocument());
         this.currentTransaction.setRefDocument(documentView.getSelectDocument().getDocument().getHash());
         this.calculateTotal();
         this.textForItem=documentView.getSelectDocument().getDocument().getBrut();
@@ -179,7 +225,36 @@ public class TransactionView implements Serializable{
     }
 
     // Save the modification of the invoice
-    public void onRowEdit(RowEditEvent<Transaction> event) {
+    public void onRowEdit(RowEditEvent<InvoiceLine> event) {
+        InvoiceLine currentLine=(InvoiceLine)event.getObject();
+        if(currentLine.getQuantity()<0)
+        {
+            // get absolute value of quantity
+            currentLine.setQuantity(Math.abs(currentLine.getQuantity()));
+            // deduct the tva from the HTunitPrice
+            List<Tva> tvaList=tvaRepository.findAll();
+            double tauxTva=0;
+            for(Tva tva:tvaList)
+            {
+                if(tva.getCode().equals(currentLine.getItem().getTva().getCode()))
+                {
+                    tauxTva=tva.getValue();
+                }
+            }
+            if(tauxTva!=0)
+            {
+                currentLine.setHTunitPrice(MathUtil.round(currentLine.getHTunitPrice()/(1+tauxTva/100),2));
+                if(currentLine.getHTtotalPrice()!=0)
+                {
+                    currentLine.setHTtotalPrice(MathUtil.round(currentLine.getHTtotalPrice()/(1+tauxTva/100),2));
+                }
+            }
+        }
+        if(currentLine.getHTtotalPrice()==0)
+        {
+            currentLine.setHTtotalPrice(currentLine.getHTunitPrice()*currentLine.getQuantity());
+        }
+
         this.calculateTotal();
     }
 
@@ -195,7 +270,7 @@ public class TransactionView implements Serializable{
 
     public void openAiInvoiceLineAnalizer()
     {
-        this.currentTransaction.setInvoiceLines(transactionService.getInvoiceLineWhitOpenAI(textForItem));
+        this.currentTransaction.getInvoiceLines().addAll(transactionService.getInvoiceLineWhitOpenAI(textForItem));
         this.calculateTotal();
     }
 
@@ -205,4 +280,21 @@ public class TransactionView implements Serializable{
         this.calculateTotal();
     }
 
+    public void saveTransaction()
+    {
+        transactionService.saveTransaction(currentTransaction);
+        PrimefaceUtil.info("Transaction enregistrée");
+        this.init();
+    }
+
+    public void newTransaction()
+    {
+        currentTransaction=new Transaction();
+    }
+
+    public void updateDictionaries()
+    {
+        transactionService.init();
+        this.treeDictionnary=transactionService.getTreeDictionary();
+    }
 }
