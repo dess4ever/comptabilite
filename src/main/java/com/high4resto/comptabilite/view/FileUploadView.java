@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
@@ -49,6 +50,9 @@ public class FileUploadView implements Serializable {
     private boolean image;
     @Getter
     @Setter
+    private boolean show=true;
+    @Getter
+    @Setter
     private String searchInput;
 
     @PostConstruct
@@ -83,13 +87,17 @@ public class FileUploadView implements Serializable {
     public void view() {
         this.pdf = false;
         this.image = false;
+        this.show=true;
         if (this.selectDocument != null) {
-            String fileName = this.selectDocument.getDocument().getFileName();
-            if (fileName.endsWith(".pdf"))
-                this.pdf = true;
-            else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png"))
-                this.image = true;
+                String fileName = this.selectDocument.getDocument().getFileName();
+                if (fileName.endsWith(".pdf"))
+                    this.pdf = true;
+                else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png"))
+                    this.image = true;    
+
+                show=false;
         }
+        
     }
 
     public StreamedContent getStreamPDF() throws IOException {
@@ -131,6 +139,7 @@ public class FileUploadView implements Serializable {
         UploadedFile files = event.getFile();
         PrimefaceUtil.addMessages(fileUploadService.saveDocument(files));
         documents = fileUploadService.getAllDocuments();
+        PrimeFaces.current().ajax().update("document:form3:documents");
     }
     
     public void search() {

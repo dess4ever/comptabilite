@@ -55,13 +55,23 @@ public class FileUploadService implements FileUploadServiceContract {
                     }
 
                     if( documentController.findByHash(document.getDocument().getHash()).isEmpty()){
+
                         if(extension.equals("pdf")){
                             try
                             {
-                                document.getDocument().setBrut(TextUtil.getTextFromPDF(file));
+                                TextUtil pdfUtil=new TextUtil();
+
+                                String text=pdfUtil.getTextFromPDF(file);
+                                if(text.length()<10)
+                                {
+                                    text=ocrService.getTextFromImagePdf(file);
+                                }
+                                document.getDocument().setBrut(text);
                                 bucketService.saveToBucket(document.getDocument().getHash()+fileName, file);
+ 
                             }
                             catch(Exception e){
+                                System.out.println(e.getMessage());
                                 logs.add(new LogMessage(3, "Erreur lors de la conversion du pdf en texte"));
                                 return logs;
                             }
@@ -69,7 +79,16 @@ public class FileUploadService implements FileUploadServiceContract {
                         else{
                             try
                             {
-                                document.getDocument().setBrut(ocrService.uploadImageObjectAndGetText(fileName, file));
+                                String text=ocrService.getTextFromImage(file, extension);
+                                if(text.length()<1)
+                                {
+                                    document.getDocument().setBrut(text);
+                                }
+                                else
+                                {
+                                    document.getDocument().setBrut("No text found");
+                                }
+                                bucketService.saveToBucket(document.getDocument().getHash()+fileName, file);
                             }
                             catch(Exception e){
                                 logs.add(new LogMessage(3, "Erreur lors de la conversion de l'image en texte"));

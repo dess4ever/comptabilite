@@ -36,6 +36,10 @@ public class TransactionFilter implements Predicate<Transaction> {
     private boolean evaluateOrCondition(List<MiniFilter> filters, Transaction transaction) {
         for (MiniFilter filter : filters) {
             String key=getValueOfFieldWithString(transaction, filter.getKey());
+            if(key==null)
+                return false;
+                
+
             if(TextUtil.testIfStringIsDateddMMyyyy(key))
             {
                 Date dateKey;

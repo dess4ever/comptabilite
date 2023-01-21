@@ -26,4 +26,5 @@ public class CompteComptale {
     private boolean isDebit;
     @Getter @Setter
     private boolean isTerminate;
+
 }

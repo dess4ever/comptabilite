@@ -34,9 +34,10 @@
 
   <div class="card">
     <h:form id="growl">
-      <p:growl id="growl" widgetVar="growl" showDetail="true" />
+      <p:growl id="growl" widgetVar="growl" showDetail="true" life="2500" />
     </h:form>
   </div>
+
   <h:form>
     <div class="card">
       <p:toolbar id="tb">
@@ -49,29 +50,17 @@
           <p:menubar rendered="#{login.loggedIn}" style="margin-right:20px">
             <p:submenu label="Document">
               <p:menuitem value="Afficher le document en cours" icon="pi pi-file" action="#{fileUploadView.view}"
-              update="document:form3:pdfViewer" oncomplete="PF('pdfViewer').show()" />
+                update="pdfPanel" oncomplete="PF('pdfViewer').show()" />
               <p:menuitem value="Delete" update="document:form3:documents growl:growl" icon="pi pi-times"
-              action="#{fileUploadView.deleteDocument}">
-              <p:confirm header="Confirmation" message="Êtes-vous sur de vouloir supprimer le document ?"
-                icon="pi pi-info-circle" />
-            </p:menuitem>
-            <p:submenu label="traiter le document">
-              <p:menuitem value="comme facture" icon="pi pi-money-bill" action="#{transactionView.fromDocument}"
-              update="growl:growl globalTab:vendorInvoice:transaction:savedTransactions:newTransaction globalTab:vendorInvoice:transaction:openAiInvoiceLine">
+                action="#{fileUploadView.deleteDocument}">
+                <p:confirm header="Confirmation" message="Êtes-vous sur de vouloir supprimer le document ?"
+                  icon="pi pi-info-circle" />
               </p:menuitem>
-            </p:submenu>
-            </p:submenu >
-            <p:submenu label="Transaction">
-              <p:submenu label="Fichier">
-                <p:menuitem value="Enregistrer Transaction" icon="pi pi-save" action="#{transactionView.saveTransaction}"
-                update="growl:growl" />
-              <p:menuitem value="Nouvelle transaction" icon="pi pi-plus" action="#{transactionView.newTransaction}"
-                update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction" />
+              <p:submenu label="traiter le document">
+                <p:menuitem value="comme facture" icon="pi pi-money-bill" action="#{transactionView.fromDocument}"
+                  update="growl:growl globalTab:vendorInvoice:transaction:savedTransactions:newTransaction globalTab:vendorInvoice:transaction:openAiInvoiceLine">
+                </p:menuitem>
               </p:submenu>
-              <p:submenu label="Saisie">
-                <p:menuitem value="Mise à jour des dictionnaires" icon="pi pi-refresh"
-                  action="#{transactionView.updateDictionaries}" />
-              </p:submenu>  
             </p:submenu>
           </p:menubar>
           <p:commandButton rendered="#{!login.loggedIn}" type="button" onclick="PF('dlg').show()" icon="pi pi-user-plus"
@@ -84,6 +73,21 @@
     </div>
   </h:form>
 
+  <h:form id="pdfPanel">
+    <p:dialog id="pdfViewer" header="#{fileUploadView.selectDocument.document.fileName}" rendered="#{login.loggedIn}" widgetVar="pdfViewer"
+    minHeight="40" showEffect="fade" modal="true">
+    <h:panelGroup>
+      <p:media rendered="#{fileUploadView.pdf}" cache="false" value="#{fileUploadView.streamPDF}" width="1024px"
+        height="768px" player="pdf">
+      </p:media>
+      <p:graphicImage rendered="#{fileUploadView.image}" value="#{fileUploadView.streamImage}" width="auto"
+        height="768px" />
+    </h:panelGroup>
+    <h:panelGroup>
+      <h4>Selectionnez un document !</h4>
+    </h:panelGroup>
+  </p:dialog>
+  </h:form>
 
   <p:accordionPanel rendered="#{login.loggedIn}" activeIndex="" id="document">
     <p:tab title="Documents">
@@ -110,7 +114,17 @@
     </p:tab>
 
     <p:tab title="Rapport comptable">
+      <p:tabView>
+        <p:tab title="Aide à la Comptabilité">
+          <ui:include src="separate/help.xhtml" />
+        </p:tab>
+        <p:tab title="Règle compte comptable">
 
+        </p:tab>
+        <p:tab title="Documents comptable">
+
+        </p:tab>
+      </p:tabView>
     </p:tab>
 
     <p:tab title="Mon compte">

@@ -1,5 +1,6 @@
 package com.high4resto.comptabilite.utils;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -19,12 +20,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.springframework.stereotype.Service;
 
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
+@Service
 public class TextUtil {
+
+
 	/*
 	 * Create a java function like String.indexOf but with regex and start index and
 	 * end index
@@ -40,23 +47,22 @@ public class TextUtil {
 	}
 
 	// Verify if a string is a date dd/MM/yyyy
-	public static boolean testIfStringIsDateddMMyyyy(String date){
-        try{
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            dateFormat.parse(date);
-            return true;
-        }catch(Exception e){
-            return false;
-        }
-    }
+	public static boolean testIfStringIsDateddMMyyyy(String date) {
+		try {
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			dateFormat.parse(date);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 	// Verify if a string is a number
-	public static boolean testIfStringIsNumber(String numString)
-	{
-		try{
+	public static boolean testIfStringIsNumber(String numString) {
+		try {
 			Double.parseDouble(numString);
 			return true;
-		}catch(Exception e){
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -71,7 +77,7 @@ public class TextUtil {
 		}
 		return index;
 	}
-	
+
 	/* Create a java function like String.indexOf but with regex */
 	public static int indexOf(String entry, String regex) {
 		int index = -1;
@@ -82,6 +88,7 @@ public class TextUtil {
 		}
 		return index;
 	}
+
 	// Convert string date to date dd/MM/yyyy
 	public static Date convertStringddMMyyyyToDate(String date) {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -90,7 +97,17 @@ public class TextUtil {
 		} catch (ParseException e) {
 		}
 		return null;
-	} 
+	}
+
+	// Convert string date to date dd-MM-yyyy
+	public static Date convertStringddMMyyyyToDate2(String date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		try {
+			return formatter.parse(date);
+		} catch (ParseException e) {
+		}
+		return null;
+	}
 
 	// Convert string date to Date yyyy-MM-dd
 	public static Date convertStringyyyyMMToDate(String date) {
@@ -106,22 +123,20 @@ public class TextUtil {
 	public static String removeNewLine(String entry) {
 		return entry.replaceAll("\\r|\\n", " ");
 	}
-	 // Get random string[length]
-	public static String getRandomString(int length)
-	{
+
+	// Get random string[length]
+	public static String getRandomString(int length) {
 		String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 		StringBuilder pass = new StringBuilder();
-		for(int x=0;x<length;x++)
-		{
-			int i = (int)Math.floor(Math.random() * 62);
+		for (int x = 0; x < length; x++) {
+			int i = (int) Math.floor(Math.random() * 62);
 			pass.append(chars.charAt(i));
 		}
 		return pass.toString();
 	}
 
-	public static double evaluateArithmeticExpression(String expression)
-	{
-		Expression e=new ExpressionBuilder(expression).build();
+	public static double evaluateArithmeticExpression(String expression) {
+		Expression e = new ExpressionBuilder(expression).build();
 		return e.evaluate();
 	}
 
@@ -295,8 +310,18 @@ public class TextUtil {
 		}
 	}
 
+	public static List<BufferedImage> getImagesFromPDF(PDDocument document) throws IOException {
+		List<BufferedImage> images = new ArrayList<BufferedImage>();
+		for (int page = 0; page < document.getNumberOfPages(); ++page) {
+			PDFRenderer pdfRenderer = new PDFRenderer(document);
+			BufferedImage bim = pdfRenderer.renderImageWithDPI(page, 300,ImageType.RGB);
+			images.add(bim);
+		}
+		return images;
+	}
+
 	// Convert pdf to text
-	public static String getTextFromPDF(byte[] content) throws IOException {
+	public String getTextFromPDF(byte[] content) throws IOException {
 		PDDocument doc = PDDocument.load(content);
 		String stripper = new PDFTextStripper().getText(doc);
 		if (doc != null)
@@ -313,15 +338,12 @@ public class TextUtil {
 	}
 
 	// count all words from a list of n-grams and return a map
-	private static Map<String,Integer> countNgrams(List<String> ngrams,String text)
-	{
-		Map<String,Integer> map = new HashMap<String,Integer>();
-		for(String ngram : ngrams)
-		{
+	private static Map<String, Integer> countNgrams(List<String> ngrams, String text) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		for (String ngram : ngrams) {
 			int count = 0;
 			int index = 0;
-			while((index = text.indexOf(ngram,index)) != -1)
-			{
+			while ((index = text.indexOf(ngram, index)) != -1) {
 				index++;
 				count++;
 			}
@@ -332,58 +354,56 @@ public class TextUtil {
 
 	// return date from a string
 	public static Date getDateFromString(String date) throws ParseException {
-		Date rDate=new Date();
+		Date rDate = new Date();
 		Pattern pattern = Pattern.compile("[0-9]{2}");
 		Matcher matcher = pattern.matcher(date);
-		if(matcher.find()) {
-			String day=matcher.group();
-			if(matcher.find()) {
-				String mont=matcher.group();
-				String year="2022";
-				String fdate=day+"/"+mont+"/"+year;
+		if (matcher.find()) {
+			String day = matcher.group();
+			if (matcher.find()) {
+				String mont = matcher.group();
+				String year = "2022";
+				String fdate = day + "/" + mont + "/" + year;
 				Locale locale = new Locale("fr", "FR");
-				return new SimpleDateFormat("dd/MM/yyyy",locale).parse(fdate);
+				return new SimpleDateFormat("dd/MM/yyyy", locale).parse(fdate);
 			}
 		}
-		return rDate;	
+		return rDate;
 	}
 
 	// Search inside a document a sentence and return a metric
-	public static double search(String sentence, String document){
+	public static double search(String sentence, String document) {
 		double metric = 0;
 		sentence = sentence.toLowerCase();
 		document = document.toLowerCase();
-		sentence =  Normalizer.normalize(sentence, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").replaceAll("\\p{M}", "");
-		document =  Normalizer.normalize(document, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").replaceAll("\\p{M}", "");
+		sentence = Normalizer.normalize(sentence, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")
+				.replaceAll("\\p{M}", "");
+		document = Normalizer.normalize(document, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")
+				.replaceAll("\\p{M}", "");
 
 		if (sentence == null || document == null || sentence.length() < 3)
 			return 0;
 
-		String[] split=sentence.split("\n");
+		String[] split = sentence.split("\n");
 
-		for(String s : split)
-		{
-			sentence=s;
-			for(int i=3;i<sentence.length();i++)
-			{
+		for (String s : split) {
+			sentence = s;
+			for (int i = 3; i < sentence.length(); i++) {
 				List<String> ngrams = decompose(sentence, i);
-				Map<String,Integer> map = countNgrams(ngrams,document);
-				double accumulator=0;
-				double proportion=(Double.valueOf(i)/Double.valueOf(sentence.length()));
-				proportion=proportion*proportion*proportion;
-				for(String ngram : ngrams)
-				{
-					if(map.containsKey(ngram))
-					{
-						accumulator += Double.valueOf(map.get(ngram))*proportion*50;
+				Map<String, Integer> map = countNgrams(ngrams, document);
+				double accumulator = 0;
+				double proportion = (Double.valueOf(i) / Double.valueOf(sentence.length()));
+				proportion = proportion * proportion * proportion;
+				for (String ngram : ngrams) {
+					if (map.containsKey(ngram)) {
+						accumulator += Double.valueOf(map.get(ngram)) * proportion * 50;
 					}
 				}
-				
-				if(document.contains(sentence))
-					accumulator*=sentence.length();
-				
-				metric+=accumulator;
-		
+
+				if (document.contains(sentence))
+					accumulator *= sentence.length();
+
+				metric += accumulator;
+
 			}
 		}
 		return metric;

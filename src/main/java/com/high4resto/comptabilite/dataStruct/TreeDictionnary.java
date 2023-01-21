@@ -12,7 +12,9 @@ public class TreeDictionnary {
     }
 
     public boolean addWord(String m, String f, int frequence) {
+        if(m!=null&&f!=null&&m.length()>3&&f.length()>3)
         return root.addWord(m, f, 0, frequence);
+        return false;
     }
 
     public boolean addWord(String m) {
@@ -28,7 +30,7 @@ public class TreeDictionnary {
     }
 
     private boolean searchWordandAdd(String m) {
-        m += '*';
+        m += '|';
         if (isPrefixed(m)) {
             TreeDictionnaryNode parcoureur = root.searchChildre(m.charAt(0));
             for (int i = 1; i < m.length(); i++) {
@@ -96,8 +98,15 @@ public class TreeDictionnary {
         List<String> liste = new ArrayList<String>();
         List<Mot> list = new ArrayList<Mot>();
         root.toList(list);
-        Collections.sort(list);
+        try
+        {
+            Collections.sort(list);
+        }   
+        catch (Exception e) {
+            System.out.println("erreur");
+        }
         for (Mot mot : list) {
+            if(mot!=null)
             liste.add(mot.getMot());
         }
         return liste;

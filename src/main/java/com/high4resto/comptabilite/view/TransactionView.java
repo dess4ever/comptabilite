@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
-
 import com.high4resto.comptabilite.dataStruct.TreeDictionnary;
 import com.high4resto.comptabilite.documents.InvoiceLine;
 import com.high4resto.comptabilite.documents.Transaction;
@@ -118,7 +117,7 @@ public class TransactionView implements Serializable{
     public List<String> completeTypeDocument(String query) {
         if(query.equals(" "))
         {
-            return treeDictionnary.get("linkedActivity").getAll();
+            return treeDictionnary.get("typeDocument").getAll();
         }
         return treeDictionnary.get("typeDocument").getList(query, 10);
     }
@@ -130,7 +129,7 @@ public class TransactionView implements Serializable{
     public List<String> completeStatusOfPayement(String query) {
         if(query.equals(" "))
         {
-            return treeDictionnary.get("linkedActivity").getAll();
+            return treeDictionnary.get("statusOfPayement").getAll();
         }
         return treeDictionnary.get("statusOfPayement").getList(query, 10);
     }
@@ -138,7 +137,7 @@ public class TransactionView implements Serializable{
     public List<String> completeAccountName(String query) {
         if(query.equals(" "))
         {
-            return treeDictionnary.get("linkedActivity").getAll();
+            return treeDictionnary.get("accountName").getAll();
         }
         return treeDictionnary.get("accountName").getList(query, 10);
     }
@@ -146,7 +145,7 @@ public class TransactionView implements Serializable{
     public List<String> completeSocietyName(String query) {
         if(query.equals(" "))
         {
-            return treeDictionnary.get("linkedActivity").getAll();
+            return treeDictionnary.get("societyName").getAll();
         }
         return treeDictionnary.get("societyName").getList(query, 10);
     }
@@ -282,9 +281,8 @@ public class TransactionView implements Serializable{
 
     public void saveTransaction()
     {
-        transactionService.saveTransaction(currentTransaction);
-        PrimefaceUtil.info("Transaction enregistrée");
-        this.init();
+        PrimefaceUtil.addMessages(transactionService.saveTransaction(currentTransaction));
+        this.transactions=transactionService.getAllTransactions();
     }
 
     public void newTransaction()

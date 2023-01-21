@@ -1,7 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:pe="http://primefaces.org/ui/extensions">
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:pe="http://primefaces.org/ui/extensions">
     <h:form id="transaction">
         <div class="container-fluid mt-5">
             <p:accordionPanel id="savedTransactions">
@@ -30,14 +29,14 @@
                                 <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Paris" />
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="Type de transaction" sortBy="#{transaction.type}" 
-                        filterBy="#{transaction.type}" filterMatchMode="contains">
-                            <h:outputText value="#{transaction.type}"/>
+                        <p:column headerText="Type de transaction" sortBy="#{transaction.type}"
+                            filterBy="#{transaction.type}" filterMatchMode="contains">
+                            <h:outputText value="#{transaction.type}" />
                         </p:column>
-                        <p:column headerText="Type de document" sortBy="#{transaction.typeDocument}" 
-                        filterBy="#{transaction.typeDocument}" filterMatchMode="contains">
-                            <h:outputText value="#{transaction.typeDocument}"/>
-                        </p:column>                        
+                        <p:column headerText="Type de document" sortBy="#{transaction.typeDocument}"
+                            filterBy="#{transaction.typeDocument}" filterMatchMode="contains">
+                            <h:outputText value="#{transaction.typeDocument}" />
+                        </p:column>
                         <p:column headerText="Nom du vendeur" sortBy="#{transaction.vendor.society.name}"
                             filterBy="#{transaction.vendor.society.name}" filterMatchMode="contains">
                             <h:outputText value="#{transaction.vendor.society.name}" />
@@ -49,30 +48,55 @@
                     </p:dataTable>
                 </p:tab>
                 <p:tab title="Transaction en cour">
+                    <p:menubar>
+                        <p:submenu label="Transaction">
+                            <p:submenu label="Fichier">
+                                <p:menuitem value="Enregistrer Transaction" icon="pi pi-save"
+                                    action="#{transactionView.saveTransaction}" update="growl:growl globalTab:vendorInvoice:transaction:savedTransactions" />
+                                <p:menuitem value="Nouvelle transaction" icon="pi pi-plus"
+                                    action="#{transactionView.newTransaction}"
+                                    update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction" />
+                            </p:submenu>
+                            <p:submenu label="Saisie">
+                                <p:menuitem value="Mise à jour des dictionnaires" icon="pi pi-refresh"
+                                    action="#{transactionView.updateDictionaries}" />
+                            </p:submenu>
+                        </p:submenu>
+                    </p:menubar>
                     <p:accordionPanel id="newTransaction">
                         <p:tab title="Information générales">
                             <div class="row">
                                 <div class="card col-6">
                                     <div class="card-body">
                                         <span class="ui-float-label mt-3">
-                                            <p:autoComplete class="invoiceCardInput" value="#{transactionView.currentTransaction.refActivite}" completeMethod="#{transactionView.completeLinkedActyvity}" />
+                                            <p:autoComplete class="invoiceCardInput"
+                                                value="#{transactionView.currentTransaction.refActivite}"
+                                                scrollHeight="300"
+                                                completeMethod="#{transactionView.completeLinkedActyvity}" />
                                             <p:outputLabel for="@previous" value="Activité liée" />
                                         </span>
                                         <span class="ui-float-label mt-3">
-                                            <p:autoComplete class="invoiceCardInput" value="#{transactionView.currentTransaction.type}" completeMethod="#{transactionView.completeType}"/>
+                                            <p:autoComplete class="invoiceCardInput"
+                                                value="#{transactionView.currentTransaction.type}" scrollHeight="300"
+                                                completeMethod="#{transactionView.completeType}" />
                                             <p:outputLabel for="@previous" value="Type de transaction" />
                                         </span>
                                         <span class="ui-float-label mt-3">
-                                            <p:autoComplete class="w-100" value="#{transactionView.currentTransaction.typeDocument}" completeMethod="#{transactionView.completeTypeDocument}" />
+                                            <p:autoComplete class="w-100"
+                                                value="#{transactionView.currentTransaction.typeDocument}"
+                                                scrollHeight="300"
+                                                completeMethod="#{transactionView.completeTypeDocument}" />
                                             <p:outputLabel for="@previous" value="Type de document" />
                                         </span>
                                         <span class="ui-float-label mt-3">
-                                            <p:inputText class="w-100" value="#{transactionView.currentTransaction.number}" />
+                                            <p:inputText class="w-100"
+                                                value="#{transactionView.currentTransaction.number}" />
                                             <p:outputLabel for="@previous" value="Numéro du document" />
                                         </span>
                                         <span class="ui-float-label mt-3">
                                             <p:datePicker id="dateVendorInvoice1" class="w-100"
-                                                value="#{transactionView.currentTransaction.invoiceDate}" pattern="dd/MM/yyyy" />
+                                                value="#{transactionView.currentTransaction.invoiceDate}"
+                                                pattern="dd/MM/yyyy" />
                                             <p:outputLabel for="@previous" value="Date du document" />
                                         </span>
                                     </div>
@@ -80,27 +104,33 @@
                                 <div class="card col-6">
                                     <div class="card-body">
                                         <span class="ui-float-label mt-3">
-                                            <p:autoComplete class="invoiceCardInput"  value="#{transactionView.currentTransaction.payementStatus}" completeMethod="#{transactionView.completeStatusOfPayement}" />
+                                            <p:autoComplete class="invoiceCardInput"
+                                                value="#{transactionView.currentTransaction.payementStatus}"
+                                                scrollHeight="300"
+                                                completeMethod="#{transactionView.completeStatusOfPayement}" />
                                             <p:outputLabel for="@previous" value="Statut de paiement" />
                                         </span>
                                         <span class="ui-float-label mt-3">
                                             <p:datePicker class="w-100"
-                                            value="#{transactionView.currentTransaction.dueDate}" pattern="dd/MM/yyyy" />
-                                            <p:outputLabel for="@previous" value="Date d'échéance" />                                   
+                                                value="#{transactionView.currentTransaction.dueDate}"
+                                                pattern="dd/MM/yyyy" />
+                                            <p:outputLabel for="@previous" value="Date d'échéance" />
                                         </span>
                                         <span class="ui-float-label mt-3">
                                             <p:datePicker class="w-100"
-                                                value="#{transactionView.currentTransaction.payementDate}" pattern="dd/MM/yyyy" />
+                                                value="#{transactionView.currentTransaction.payementDate}"
+                                                pattern="dd/MM/yyyy" />
                                             <p:outputLabel for="@previous" value="Date de paiement" />
                                         </span>
-            
+
                                         <span class="ui-float-label mt-3">
-                                            <p:inputText class="w-100" value="#{transactionView.currentTransaction.payementMethod}" />
+                                            <p:inputText class="w-100"
+                                                value="#{transactionView.currentTransaction.payementMethod}" />
                                             <p:outputLabel for="@previous" value="Méthode de payement" />
-                                        </span>                           
+                                        </span>
                                     </div>
                                 </div>
-                            </div>        
+                            </div>
                         </p:tab>
                         <p:tab title="Compte de payement">
                             <div class="row">
@@ -112,8 +142,12 @@
                                         <div class="card-body">
                                             <span class="ui-float-label mt-3">
                                                 <p:autoComplete class="invoiceCardInput"
-                                                    value="#{transactionView.currentTransaction.destinationPayement.name}" completeMethod="#{transactionView.completeAccountName}">
-                                                    <p:ajax event="itemSelect" listener="#{transactionView.onCreditedAccountSelect}" update="CreditedAccount" />
+                                                    value="#{transactionView.currentTransaction.destinationPayement.name}"
+                                                    completeMethod="#{transactionView.completeAccountName}" scrollHeight="300">
+
+                                                    <p:ajax event="itemSelect"
+                                                        listener="#{transactionView.onCreditedAccountSelect}"
+                                                        update="CreditedAccount" />
                                                 </p:autoComplete>
                                                 <p:outputLabel for="@previous" value="Nom associé au RIB" />
                                             </span>
@@ -146,12 +180,14 @@
                                                 <p:inputText class="invoiceCardInput"
                                                     value="#{transactionView.currentTransaction.destinationPayement.bic}" />
                                                 <p:outputLabel for="@previous" value="Numéro BIC" />
-                                            </span>                                    
+                                            </span>
                                         </div>
                                         <div class="card-footer">
-                                            <p:commandButton class="btn btn-primary w-100" value="Ajouter le compte de la société" icon="pi pi-plus" 
-                                            action="#{transactionView.addSocietyRibToCreditedAccount}" update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:CreditedAccount" />
-                                        </div>    
+                                            <p:commandButton class="btn btn-primary w-100"
+                                                value="Ajouter le compte de la société" icon="pi pi-plus"
+                                                action="#{transactionView.addSocietyRibToCreditedAccount}"
+                                                update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:CreditedAccount" />
+                                        </div>
                                     </p:panel>
                                 </div>
                                 <div class="card col-6">
@@ -162,9 +198,11 @@
                                         <div class="card-body">
                                             <span class="ui-float-label mt-3">
                                                 <p:autoComplete class="invoiceCardInput"
-                                                    value="#{transactionView.currentTransaction.originPayement.name}"
+                                                    value="#{transactionView.currentTransaction.originPayement.name}" scrollHeight="300"
                                                     completeMethod="#{transactionView.completeAccountName}">
-                                                    <p:ajax event="itemSelect" listener="#{transactionView.onDebitedAccountSelect}" update="debitedAccount" />
+                                                    <p:ajax event="itemSelect"
+                                                        listener="#{transactionView.onDebitedAccountSelect}"
+                                                        update="debitedAccount" />
                                                 </p:autoComplete>
                                                 <p:outputLabel for="@previous" value="Nom associé au RIB" />
                                             </span>
@@ -197,11 +235,13 @@
                                                 <p:inputText class="invoiceCardInput"
                                                     value="#{transactionView.currentTransaction.originPayement.bic}" />
                                                 <p:outputLabel for="@previous" value="Numéro BIC" />
-                                            </span>                                                               
+                                            </span>
                                         </div>
                                         <div class="card-footer">
-                                            <p:commandButton class="btn btn-primary w-100" value="Ajouter le compte de la société" icon="pi pi-plus" 
-                                            action="#{transactionView.addSocietyRibToDebitedAccount}" update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:debitedAccount" />
+                                            <p:commandButton class="btn btn-primary w-100"
+                                                value="Ajouter le compte de la société" icon="pi pi-plus"
+                                                action="#{transactionView.addSocietyRibToDebitedAccount}"
+                                                update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:debitedAccount" />
                                         </div>
                                     </p:panel>
                                 </div>
@@ -217,9 +257,11 @@
                                         <div class="card-body">
                                             <span class="ui-float-label mt-3">
                                                 <p:autoComplete class="invoiceCardInput"
-                                                    value="#{transactionView.currentTransaction.vendor.society.name}" 
+                                                    value="#{transactionView.currentTransaction.vendor.society.name}" scrollHeight="300"
                                                     completeMethod="#{transactionView.completeSocietyName}">
-                                                    <p:ajax event="itemSelect" listener="#{transactionView.onVendorSelect}" update="vendorForm" />
+                                                    <p:ajax event="itemSelect"
+                                                        listener="#{transactionView.onVendorSelect}"
+                                                        update="vendorForm" />
                                                 </p:autoComplete>
                                                 <p:outputLabel for="@previous" value="Nom de la société" />
                                             </span>
@@ -235,7 +277,8 @@
                                             </span>
                                             <p:commandButton class="btn btn-primary invoiceCardInput"
                                                 value="Chercher informations depuis le SIRET"
-                                                actionListener="#{transactionView.searchFromSiret}" update="vendorForm growl:growl" />
+                                                actionListener="#{transactionView.searchFromSiret}"
+                                                update="vendorForm growl:growl" />
                                             <span class="ui-float-label mt-3">
                                                 <p:inputText class="invoiceCardInput"
                                                     value="#{transactionView.currentTransaction.vendor.society.siren}" />
@@ -258,8 +301,9 @@
                                             </span>
                                         </div>
                                         <div class="card-footer">
-                                            <p:commandButton class="btn btn-primary w-100" value="Ajouter la société" icon="pi pi-plus" 
-                                            action="#{transactionView.addSocietyToVendor}" update="vendorForm" />
+                                            <p:commandButton class="btn btn-primary w-100" value="Ajouter la société"
+                                                icon="pi pi-plus" action="#{transactionView.addSocietyToVendor}"
+                                                update="vendorForm" />
                                         </div>
                                     </p:panel>
                                 </div>
@@ -270,10 +314,12 @@
                                         </div>
                                         <div class="card-body">
                                             <span class="ui-float-label mt-3">
-                                                <p:autoComplete class="invoiceCardInput"
-                                                    value="#{transactionView.currentTransaction.customer.name}" 
+                                                <p:autoComplete class="invoiceCardInput" scrollHeight="300"
+                                                    value="#{transactionView.currentTransaction.customer.name}"
                                                     completeMethod="#{transactionView.completeSocietyName}">
-                                                    <p:ajax event="itemSelect" listener="#{transactionView.onCustomerSelect}" update="customerForm" />
+                                                    <p:ajax event="itemSelect"
+                                                        listener="#{transactionView.onCustomerSelect}"
+                                                        update="customerForm" />
                                                 </p:autoComplete>
                                                 <p:outputLabel for="@previous" value="Nom de la société" />
                                             </span>
@@ -289,7 +335,8 @@
                                             </span>
                                             <p:commandButton class="btn btn-primary invoiceCardInput"
                                                 value="Chercher informations depuis le SIRET"
-                                                actionListener="#{transactionView.searchFromSiretCustomer}" update="customerForm growl:growl" />
+                                                actionListener="#{transactionView.searchFromSiretCustomer}"
+                                                update="customerForm growl:growl" />
                                             <span class="ui-float-label mt-3">
                                                 <p:inputText class="invoiceCardInput"
                                                     value="#{transactionView.currentTransaction.customer.siren}" />
@@ -312,52 +359,59 @@
                                             </span>
                                         </div>
                                         <div class="card-footer">
-                                            <p:commandButton class="btn btn-primary w-100" value="Ajouter la société" icon="pi pi-plus" 
-                                            action="#{transactionView.addSocietyToCustomer}" update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:customerForm" />
+                                            <p:commandButton class="btn btn-primary w-100" value="Ajouter la société"
+                                                icon="pi pi-plus" action="#{transactionView.addSocietyToCustomer}"
+                                                update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:customerForm" />
                                         </div>
-                                    </p:panel>                                
+                                    </p:panel>
                                 </div>
                             </div>
                         </p:tab>
                         <p:tab title="Produits et service">
                             <div class="card">
                                 <div class="card-body">
-                                    <p:dataTable id="transactionLineTable" var="line" value="#{transactionView.currentTransaction.invoiceLines}"
-                                        editable="true" selection="#{transactionView.selectedLine}" selectionMode="single"
+                                    <p:dataTable id="transactionLineTable" var="line"
+                                        value="#{transactionView.currentTransaction.invoiceLines}" editable="true"
+                                        selection="#{transactionView.selectedLine}" selectionMode="single"
                                         rowKey="#{line.rowKey}">
-                
+
                                         <p:ajax event="rowEdit" listener="#{transactionView.onRowEdit}"
-                                            update="growl:growl globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:invoiceTotal"/>
-                                        <p:ajax event="rowEditCancel" listener="#{transactionView.onRowCancel}" update="growl:growl" />
-                
+                                            update="growl:growl globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:invoiceTotal" />
+                                        <p:ajax event="rowEditCancel" listener="#{transactionView.onRowCancel}"
+                                            update="growl:growl" />
+
                                         <p:column headerText="Nom">
                                             <p:cellEditor>
                                                 <f:facet name="output">
                                                     <h:outputText value="#{line.item.fact_Name}" />
                                                 </f:facet>
                                                 <f:facet name="input">
-                                                    <p:autoComplete value="#{line.item.fact_Name}" completeMethod="#{transactionView.completeItemName}" >
+                                                    <p:autoComplete value="#{line.item.fact_Name}" scrollHeight="300"
+                                                        completeMethod="#{transactionView.completeItemName}">
                                                         <f:attribute name="currentLine" value="#{line}" />
-                                                        <p:ajax event="itemSelect" listener="#{transactionView.onItemForInvoiceLineSelect}" update="transactionLineTable">
+                                                        <p:ajax event="itemSelect"
+                                                            listener="#{transactionView.onItemForInvoiceLineSelect}"
+                                                            update="transactionLineTable">
                                                         </p:ajax>
                                                     </p:autoComplete>
                                                 </f:facet>
                                             </p:cellEditor>
                                         </p:column>
-                
+
                                         <p:column headerText="Catégorie">
                                             <p:cellEditor>
                                                 <f:facet name="output">
                                                     <h:outputText value="#{line.item.category.name}" />
                                                 </f:facet>
                                                 <f:facet name="input">
-                                                    <p:autoComplete value="#{line.item.category.name}" scrollHeight="250" 
+                                                    <p:autoComplete value="#{line.item.category.name}"
+                                                        scrollHeight="300"
                                                         completeMethod="#{transactionView.completeCategoryItem}" />
-                
+
                                                 </f:facet>
                                             </p:cellEditor>
                                         </p:column>
-                
+
                                         <p:column headerText="Type (produit/service)">
                                             <p:cellEditor>
                                                 <f:facet name="output">
@@ -368,7 +422,7 @@
                                                 </f:facet>
                                             </p:cellEditor>
                                         </p:column>
-                
+
                                         <p:column headerText="Quantité">
                                             <p:cellEditor>
                                                 <f:facet name="output">
@@ -379,7 +433,7 @@
                                                 </f:facet>
                                             </p:cellEditor>
                                         </p:column>
-                
+
                                         <p:column headerText="Prix unitaire hors taxe">
                                             <p:cellEditor>
                                                 <f:facet name="output">
@@ -416,12 +470,14 @@
                                     </p:dataTable>
                                     <div class="row mt-3">
                                         <div class="col-sm">
-                                            <p:commandButton class="invoiceCardInput" value="Ajouter une ligne" icon="pi pi-plus"
-                                                actionListener="#{transactionView.addTransactionLine}" update="transactionLineTable" />
+                                            <p:commandButton class="invoiceCardInput" value="Ajouter une ligne"
+                                                icon="pi pi-plus" actionListener="#{transactionView.addTransactionLine}"
+                                                update="transactionLineTable" />
                                         </div>
                                         <div class="col-sm">
-                                            <p:commandButton class="invoiceCardInput" onclick="PF('openAiInvoiceLine').show()" value="Compléter automatiquement"
-                                            icon="pi pi-plus" />    
+                                            <p:commandButton class="invoiceCardInput"
+                                                onclick="PF('openAiInvoiceLine').show()"
+                                                value="Compléter automatiquement" icon="pi pi-plus" />
                                         </div>
                                     </div>
                                 </div>
@@ -456,10 +512,10 @@
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>
-                                <p:commandButton value="Recalculer le total" icon="pi pi-refresh" action="#{transactionView.calculateTotal}"
-                                    update="invoiceTotal" />
-                            </div>                            
-                        </p:tab>                       
+                                <p:commandButton value="Recalculer le total" icon="pi pi-refresh"
+                                    action="#{transactionView.calculateTotal}" update="invoiceTotal" />
+                            </div>
+                        </p:tab>
                     </p:accordionPanel>
                 </p:tab>
             </p:accordionPanel>
@@ -471,19 +527,22 @@
                     <h3 class="card-title">Texte à traiter</h3>
                 </div>
                 <div class="card-body">
-                    <p:inputTextarea id="openAiInvoiceLineText" value="#{transactionView.textForItem}" rows="20" cols="100"
-                        autoResize="false" />
+                    <p:inputTextarea id="openAiInvoiceLineText" value="#{transactionView.textForItem}" rows="20"
+                        cols="100" autoResize="false" />
                 </div>
                 <div class="card-footer">
-                    <p:commandButton class="invoiceCardInput" value="Analyser" icon="pi pi-search" actionListener="#{transactionView.openAiInvoiceLineAnalizer}"
-                    oncomplete="PF('openAiInvoiceLine').hide()"
-                    update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable" />    
+                    <p:commandButton class="invoiceCardInput" value="Analyser" icon="pi pi-search"
+                        actionListener="#{transactionView.openAiInvoiceLineAnalizer}"
+                        oncomplete="PF('openAiInvoiceLine').hide()"
+                        update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable" />
                 </div>
             </div>
         </p:dialog>
 
-        <p:contextMenu for="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable" id="vendorInvoiceTableMenu">
-            <p:menuitem value="Supprimer" icon="pi pi-trash" update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable"
+        <p:contextMenu for="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable"
+            id="vendorInvoiceTableMenu">
+            <p:menuitem value="Supprimer" icon="pi pi-trash"
+                update="globalTab:vendorInvoice:transaction:savedTransactions:newTransaction:transactionLineTable"
                 actionListener="#{transactionView.deleteTransactionLine}" />
         </p:contextMenu>
     </h:form>

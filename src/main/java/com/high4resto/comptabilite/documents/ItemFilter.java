@@ -34,6 +34,8 @@ public class ItemFilter implements Predicate<InvoiceLine> {
     private boolean evaluateOrCondition(List<MiniFilter> filters, InvoiceLine invoiceLine) {
         for (MiniFilter filter : filters) {
             String key = getValueOfFieldWithString(invoiceLine, filter.getKey());
+            if(key==null)
+                return false;
             if (TextUtil.testIfStringIsNumber(key)) {
                 double numberKey = Double.parseDouble(key);
                 double numberValue = Double.parseDouble(filter.getValue());

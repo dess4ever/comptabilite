@@ -76,14 +76,14 @@ public class ItemFilterView {
             if(query.equals(" "))
                 return transactionService.getTreeDictionary().get("ItemName").getAll();
             else
-                return transactionService.getTreeDictionary().get("ItemName").getList(query, 0);
+                return transactionService.getTreeDictionary().get("ItemName").getList(query, 10);
         }
         else if (currentKeyForDictionnary.equals("item.category.name"))
         {
             if(query.equals(" "))
                 return transactionService.getTreeDictionary().get("ItemCategory").getAll();
             else
-                return transactionService.getTreeDictionary().get("ItemCategory").getList(query, 0);
+                return transactionService.getTreeDictionary().get("ItemCategory").getList(query, 10);
         }
         return results;
     }
@@ -140,6 +140,11 @@ public class ItemFilterView {
     {
         PrimefaceUtil.addMessages(itemFilterService.deleteItemFilter(itemFilter));
         this.itemFilters = itemFilterService.getAllItemFilters();
+    }
+
+    public void newFilter()
+    {
+        this.itemFilter = new ItemFilter();
     }
 
 }

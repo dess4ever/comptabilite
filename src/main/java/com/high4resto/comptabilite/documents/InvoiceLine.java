@@ -27,6 +27,8 @@ public class InvoiceLine {
     private double TTCunitPrice;
     @Getter @Setter
     private double TTCtotalPrice;
+    @Getter @Setter
+    private double TVAPrice;
     @Transient
     @Getter @Setter
     private String rowKey;

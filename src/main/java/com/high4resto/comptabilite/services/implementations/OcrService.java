@@ -1,71 +1,53 @@
 package com.high4resto.comptabilite.services.implementations;
 
-import com.google.cloud.vision.v1.AnnotateImageRequest;
-import com.google.cloud.vision.v1.AnnotateImageResponse;
-import com.google.cloud.vision.v1.Feature;
-import com.google.cloud.vision.v1.Image;
-import com.google.cloud.vision.v1.ImageAnnotatorClient;
-import com.google.cloud.vision.v1.ImageSource;
-
+import com.google.cloud.documentai.v1.Document;
+import com.google.cloud.documentai.v1.DocumentProcessorServiceClient;
+import com.google.cloud.documentai.v1.DocumentProcessorServiceSettings;
+import com.google.cloud.documentai.v1.ProcessRequest;
+import com.google.cloud.documentai.v1.ProcessResponse;
+import com.google.cloud.documentai.v1.RawDocument;
+import com.google.protobuf.ByteString;
 import jakarta.annotation.PostConstruct;
-
 import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OcrService {
-    
-    @Autowired
-    private BucketService bucketService;
 
-    private ImageSource imgSource;
-    private Feature textFeature;
-    private AnnotateImageResponse visionResponse;
+  private DocumentProcessorServiceClient client;
+  private final String name = System.getenv("GOOGLE_OCR_PROCESSOR_END_POINT");
 
-    @PostConstruct
-    public void init() {
-      textFeature = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build();
+  @PostConstruct
+  public void init() {
+    try {
+      client = DocumentProcessorServiceClient.create(
+          DocumentProcessorServiceSettings.newBuilder().setEndpoint("eu-documentai.googleapis.com:443").build());
+    } catch (IOException e) {
+      e.printStackTrace();
     }
+  }
 
-    // upload object to bucket
-    public String uploadImageObjectAndGetText(String objectName, byte[] content) throws IOException {  
-      bucketService.saveToBucket(objectName, content);
-      return getTextFromBucket(objectName);
-    }
-    
 
-    // Get text from image
-    private String  getTextFromBucket(String filename) {
-        List<AnnotateImageRequest> visionRequests = new ArrayList<>();
-        String gcsPath = String.format("gs://%s/%s", bucketService.UPLOAD_BUCKET_NAME, filename);
-      
-        imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
-        Image img = Image.newBuilder().setSource(imgSource).build();
-      
-        AnnotateImageRequest visionRequest =
-            AnnotateImageRequest.newBuilder().addFeatures(textFeature).setImage(img).build();
-        visionRequests.add(visionRequest);
-      
-        // Detect text in an image using the Cloud Vision API
-        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
-          visionResponse = client.batchAnnotateImages(visionRequests).getResponses(0);
-          if (visionResponse == null || !visionResponse.hasFullTextAnnotation()) {
-            return String.format("Image %s contains no text", filename);
-          }
-      
-          if (visionResponse.hasError()) {
-            return visionResponse.getError().getMessage();
-          }
-        } catch (IOException e) {
-          return e.getMessage();
-        }
-      
-        return visionResponse.getFullTextAnnotation().getText();
-    }
-    
+  public String getTextFromImage(byte[] imageFileData, String extention)
+  {
+    ByteString content = ByteString.copyFrom(imageFileData);
+    RawDocument document =
+    RawDocument.newBuilder().setContent(content).setMimeType("image/" + extention).build();
+    ProcessRequest request =
+    ProcessRequest.newBuilder().setName(name).setRawDocument(document).build();
+    ProcessResponse result = client.processDocument(request);
+    Document documentResponse = result.getDocument();
+    return documentResponse.getText();
+  }
+
+  public String getTextFromImagePdf(byte[] imageFileData) {
+    ByteString content = ByteString.copyFrom(imageFileData);
+    RawDocument document =
+    RawDocument.newBuilder().setContent(content).setMimeType("application/pdf").build();
+    ProcessRequest request =
+    ProcessRequest.newBuilder().setName(name).setRawDocument(document).build();
+    ProcessResponse result = client.processDocument(request);
+    Document documentResponse = result.getDocument();
+    return documentResponse.getText();
+  }
 }

@@ -273,8 +273,8 @@ public class TransactionService implements TransactionServiceContract {
             matcher = pattern.matcher(date);
             if (matcher.find())
                 try {
-                    transaction.setInvoiceDate(TextUtil.getDateFromString(matcher.group()));
-                } catch (ParseException e) {
+                    transaction.setInvoiceDate(TextUtil.convertStringddMMyyyyToDate2(matcher.group()));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }    
         }
@@ -489,20 +489,27 @@ public class TransactionService implements TransactionServiceContract {
                 double value = newTransaction.getInvoiceLines().get(i).getHTtotalPrice() * (100 + aTva) / 100;
                 totalTTC += value;
                 totalTVA_A += value - newTransaction.getInvoiceLines().get(i).getHTtotalPrice();
+                newTransaction.getInvoiceLines().get(i).setTTCtotalPrice(value);
+                newTransaction.getInvoiceLines().get(i).setTVAPrice(value - newTransaction.getInvoiceLines().get(i).getHTtotalPrice());
 
             } else if (newTransaction.getInvoiceLines().get(i).getItem().getTva().getCode().equals("B")) {
                 double value = newTransaction.getInvoiceLines().get(i).getHTtotalPrice() * (100 + bTva) / 100;
                 totalTTC += value;
                 totalTVA_B += value - newTransaction.getInvoiceLines().get(i).getHTtotalPrice();
+                newTransaction.getInvoiceLines().get(i).setTTCtotalPrice(value);
+                newTransaction.getInvoiceLines().get(i).setTVAPrice(value - newTransaction.getInvoiceLines().get(i).getHTtotalPrice());
             } else if (newTransaction.getInvoiceLines().get(i).getItem().getTva().getCode().equals("C")) {
                 double value = newTransaction.getInvoiceLines().get(i).getHTtotalPrice() * (100 + cTva) / 100;
                 totalTTC += value;
                 totalTVA_C += value - newTransaction.getInvoiceLines().get(i).getHTtotalPrice();
-
+                newTransaction.getInvoiceLines().get(i).setTTCtotalPrice(value);
+                newTransaction.getInvoiceLines().get(i).setTVAPrice(value - newTransaction.getInvoiceLines().get(i).getHTtotalPrice());
             } else if (newTransaction.getInvoiceLines().get(i).getItem().getTva().getCode().equals("D")) {
                 double value = newTransaction.getInvoiceLines().get(i).getHTtotalPrice() * (100 + dTva) / 100;
                 totalTTC += value;
                 totalTVA_D += value - newTransaction.getInvoiceLines().get(i).getHTtotalPrice();
+                newTransaction.getInvoiceLines().get(i).setTTCtotalPrice(value);
+                newTransaction.getInvoiceLines().get(i).setTVAPrice(value - newTransaction.getInvoiceLines().get(i).getHTtotalPrice());
             } else {
                 totalTTC += newTransaction.getInvoiceLines().get(i).getHTtotalPrice();
             }
@@ -597,14 +604,21 @@ public class TransactionService implements TransactionServiceContract {
         transaction.setTypeDocument("Facture");
         // search vendor
         // If siret number
-        Pattern pattern = Pattern.compile("(\\d{14})");
+        Pattern pattern = Pattern.compile("(\\D\\d{14})\\D");
         Matcher matcher = pattern.matcher(tpDocument.getBrut());
-        if (matcher.find()) {
+        Vendor tpVendor = null;
+        while(matcher.find()) {
             String siret = matcher.group(1);
-            transaction.setVendor(sirenApiService.getVendorFromSiret(siret));
+            try{
+                tpVendor = sirenApiService.getVendorFromSiret(siret);
+                transaction.setVendor(tpVendor);
+                break;
+            }
+            catch(Exception e){
+            }
         }
-        // Else with french Tva number
-        else {
+            // Else with french Tva number
+        if (tpVendor == null) {
             pattern = Pattern.compile("(FR\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{5})");
             matcher = pattern.matcher(tpDocument.getBrut());
             if (matcher.find()) {
@@ -612,13 +626,19 @@ public class TransactionService implements TransactionServiceContract {
                 List<Transaction> transactions = transactionController.findAll();
                 for (Transaction t : transactions) {
                     if (t.getVendor().getSociety().getTva_Number().equals(tva)) {
-                        transaction.setVendor(t.getVendor());
+                        tpVendor=t.getVendor();
                         break;
                     }
                 }
             }
         }
+        // If vendor not found  
+        if (tpVendor==null)
+        {
+            tpVendor=new Vendor();
+        }
 
+        transaction.setVendor(tpVendor);
         transaction.setCustomer(userLoginView.getUser().getSociety());
         return transaction;
     }
@@ -639,6 +659,7 @@ public class TransactionService implements TransactionServiceContract {
                     }
                 }
             }
+            transaction=this.calculateTotal(transaction);
             transactionController.save(transaction);
         }
     }

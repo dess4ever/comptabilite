@@ -26,6 +26,8 @@
                   selection="#{fileUploadView.selectDocument}" rowKey="#{document.document.hash}" paginator="true"
                    paginatorPosition="both"  rows="10" filteredValue="#{fileUploadView.filteredDocuments}" selectionMode="single">
                   <p:ajax event="rowSelect" listener="#{fileUploadView.onRowSelect}" update="growl:growl"/>
+                  <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="growl:growl"/>
+                  <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="growl:growl"/>
                   <p:column headerText="Nom du fichier" filterBy="#{document.document.fileName}" sortBy="#{document.document.fileName}" filterMatchMode="contains">
                     <p:cellEditor>
                       <f:facet name="output">
@@ -71,12 +73,6 @@
               <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" />
             </p:confirmDialog>
 
-            <p:dialog id="pdfViewer" header="#{fileUploadView.selectDocument.document.fileName}" widgetVar="pdfViewer"
-              minHeight="40" showEffect="fade" modal="true">
-              <p:media rendered="#{fileUploadView.pdf}" cache="false" value="#{fileUploadView.streamPDF}" width="1024px" height="768px" player="pdf">
-              </p:media>
-              <p:graphicImage rendered="#{fileUploadView.image}" value="#{fileUploadView.streamImage}" width="auto" height="768px" />
-            </p:dialog>
           </h:form>
         </div>
       </div>

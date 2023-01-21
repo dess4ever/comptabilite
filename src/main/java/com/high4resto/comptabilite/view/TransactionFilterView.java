@@ -222,4 +222,9 @@ public class TransactionFilterView {
         PrimefaceUtil.info("Suppression du filtre");
     }
 
+    public void newFilter()
+    {
+        this.transactionFilter = new TransactionFilter();
+    }
+
 }

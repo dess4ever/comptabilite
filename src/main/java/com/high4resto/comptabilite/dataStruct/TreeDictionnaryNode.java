@@ -24,10 +24,10 @@ public class TreeDictionnaryNode {
         {
             for(TreeDictionnaryNode n:childrens)
             {
-                if(n.c=='*')
+                if(n.c=='|')
                 return false;
             }
-            TreeDictionnaryNode newNode=new TreeDictionnaryNode('*');
+            TreeDictionnaryNode newNode=new TreeDictionnaryNode('|');
             Mot mot=new Mot();
             mot.setMot(f);
             mot.setFrequence(frequence);
@@ -74,7 +74,7 @@ public class TreeDictionnaryNode {
         {
             for(TreeDictionnaryNode n:childrens)
             {
-                if(n.c=='*')
+                if(n.c=='|')
                 return true;
             }
             return false;
@@ -114,7 +114,7 @@ public class TreeDictionnaryNode {
 
     public boolean isWord()
     {
-        return (searchChildre('*')!=null);
+        return (searchChildre('|')!=null);
     }
 
     public static List<Mot> response=new ArrayList<Mot>();
@@ -125,7 +125,7 @@ public class TreeDictionnaryNode {
 
     public void toList(List<Mot> small)
     {
-        if (c=='*')
+        if (c=='|')
         {
             small.add(mot);
         }

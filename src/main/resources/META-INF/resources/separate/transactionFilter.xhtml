@@ -115,6 +115,9 @@
                                 <p:commandButton class="col-3 mt-3" value="Sauvegarder" icon="pi pi-save"
                                     action="#{transactionFilterView.save}"
                                     update="globalTab:filterTab:transactionFilterForm" />
+                                <p:commandButton class="col-3 mt-3" value="Nouvrau filtre" icon="pi pi-plus"
+                                    action="#{transactionFilterView.newFilter}"
+                                    update="globalTab:filterTab:transactionFilterForm" />
                             </div>
                         </div>
                     </div>
@@ -267,6 +270,8 @@
                                     action="#{itemFilterView.testFilter}" update="globalTab:filterTab:ItemFilterForm" />
                                 <p:commandButton class="col-3 mt-3" value="Sauvegarder" icon="pi pi-save"
                                     action="#{itemFilterView.save}" update="globalTab:filterTab:ItemFilterForm" />
+                                <p:commandButton class="col-3 mt-3" value="Nouveaux filtres" icon="pi pi-plus"
+                                    action="#{itemFilterView.newFilter}" update="globalTab:filterTab:ItemFilterForm" />
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <div class="container-fluid">
+        <h:form id="help">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h4>Saisie du code comptable</h4>
+                    </div>
+                    <div class="card-subtitle">
+                        <p>Vous pouvez saisir le code comptable de votre choix.</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p:autoComplete class="invoiceCardInput" value="#{compteComptableView.searchInput}"  scrollHeight="300" completeMethod="#{compteComptableView.completeCode}">
+                        <p:ajax event="itemSelect" listener="#{compteComptableView.onItemSelect}" update="growl:growl help"/>
+                    </p:autoComplete>
+                </div>
+                <div class="card-footer">
+                    <h4>Description:</h4>
+                    <p:outputLabel value="#{compteComptableView.description}"/>
+                    <h4>Un exemple ?</h4>
+                    <p:outputLabel value="#{compteComptableView.casReel}"/>
+                </div>
+            </div>
+        </h:form>
+    </div>
+</ui:composition>

@@ -60,7 +60,6 @@ public class FirstConnectionView implements Serializable {
             Thread.sleep(2000);
             FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
