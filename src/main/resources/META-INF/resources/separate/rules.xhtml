@@ -1,0 +1,148 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:form id="rules">
+        <div class="container-fluid mt-5">
+            <div class="card mt-5">
+                <div class="card-header">
+                    <h3 class="card-title">Création d'une règle comptable</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput" id="ruleName"
+                                    value="#{rulesView.currentRules.name}" />
+                                <p:outputLabel for="@previous" value="Nom de la règle" />
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <span class="ui-float-label mt-3">
+                                <p:inputText class="invoiceCardInput" id="ruleCode"
+                                    value="#{rulesView.currentRules.code}" />
+                                <p:outputLabel for="@previous" value="Code de la règle" />
+                            </span>
+                        </div>
+                        <div class="col-12">
+                            <span class="ui-float-label mt-3">
+                                <p:inputTextarea class="invoiceCardInput" id="ruleDescription"
+                                    value="#{rulesView.currentRules.description}" />
+                                <p:outputLabel for="@previous" value="Description de la règle" />
+                            </span>
+                        </div>
+                        <div class="card col-12 mt-3">
+                            <div class="card-header">
+                                <h4 class="card-title">Filtres de transactions</h4>
+                            </div>
+                            <div class="card-body">
+                                <p:dataTable id="transactionFilterComptability"
+                                    value="#{rulesView.currentRules.transactionFilters}" var="transactionFilter">
+                                    <p:column headerText="Nom de la règle">
+                                        <h:outputText value="#{transactionFilter.name}" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton
+                                            action="#{rulesView.deleteTransactionFilter(transactionFilter)}"
+                                            update="globalTab:comptability:rules"
+                                            icon="pi pi-trash" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+
+                            <div class="card-footer">
+                                <p:dataTable value="#{rulesView.transactionFilterList}" id="availaibleTransactionRules"
+                                    var="transactionFilter">
+                                    <p:column headerText="Filtres de transactions disponibles">
+                                        <h:outputText value="#{transactionFilter.name}" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton action="#{rulesView.addTransactionFilter(transactionFilter)}"
+                                            update="globalTab:comptability:rules"
+                                            icon="pi pi-plus" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                        <div class="card col-12 mt-3">
+                            <div class="card-header">
+                                <h4 class="card-title">Filtres des items</h4>
+                            </div>
+                            <div class="card-body">
+                                <p:dataTable id="itemFilterComptability"
+                                    value="#{rulesView.currentRules.itemFilters}" var="itemFilter">
+                                    <p:column headerText="Nom de la règle">
+                                        <h:outputText value="#{itemFilter.name}" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton action="#{rulesView.deleteItemFilter(itemFilter)}"
+                                            update="globalTab:comptability:rules" icon="pi pi-trash" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div class="card-footer">
+                                <p:dataTable value="#{rulesView.itemFilterList}" id="availaibleItemRules"
+                                    var="itemFilter">
+                                    <p:column headerText="Filtres des items disponibles">
+                                        <h:outputText value="#{itemFilter.name}" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton action="#{rulesView.addItemFilter(itemFilter)}"
+                                            update="globalTab:comptability:rules" icon="pi pi-plus" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card mt-5">
+                                <div class="card-header">
+                                    <h4 class="card-title">Sélection du champ</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p:selectOneListbox  value="#{rulesView.currentRules.fieldFor}">
+                                        <f:selectItem itemLabel="Montant total HT" itemValue="HTtotalPrice" />
+                                        <f:selectItem itemLabel="Montant total TTC" itemValue="TTCtotalPrice" />
+                                        <f:selectItem itemLabel="Quantité" itemValue="quantity" />
+                                        <f:selectItem itemLabel="Prix unitaire HT" itemValue="HTunitPrice" />
+                                        <f:selectItem itemLabel="Prix unitaire TTC" itemValue="TTCunitPrice" />
+                                        <f:selectItem itemLabel="Total TVA" itemValue="TVAPrice" />
+                                    </p:selectOneListbox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card mt-5">
+                                <div class="card-header">
+                                    <h4 class="card-title">Opération</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p:selectOneListbox  value="#{rulesView.currentRules.operator}">
+                                        <f:selectItem itemLabel="Somme" itemValue="SUM" />
+                                        <f:selectItem itemLabel="Moyenne" itemValue="MEAN" />
+                                        <f:selectItem itemLabel="Médiane" itemValue="MEDIAN" />
+                                        <f:selectItem itemLabel="Comptage" itemValue="COUNT" />
+                                        <f:selectItem itemLabel="Minimum" itemValue="MIN" />
+                                        <f:selectItem itemLabel="Maximum" itemValue="MAX" />
+                                        <f:selectItem itemLabel="Ecart type" itemValue="STANDARDDEVIATION" />
+                                        <f:selectItem itemLabel="Portée" itemValue="RANGE" />
+                                    </p:selectOneListbox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-5">
+                            <div class="card-header">
+                                <h4 class="card-title">Résultat</h4>
+                            </div>
+                            <div class="card-body">
+                                <p:commandButton action="#{rulesView.calculateResult()}" update="result"
+                                    icon="pi pi-refresh" />
+                            </div>
+                            <div class="card-footer">
+                                <h:outputText id="result" value="#{rulesView.result}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h:form>
+</ui:composition>

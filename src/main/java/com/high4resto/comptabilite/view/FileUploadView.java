@@ -70,8 +70,9 @@ public class FileUploadView implements Serializable {
         PrimefaceUtil.addMessages(fileUploadService.updateDocument(tFile));
     }
 
-    public void deleteDocument() {
-        PrimefaceUtil.addMessages(fileUploadService.deleteDocument(this.selectDocument));
+    public void deleteDocument(ResultSearch document) {
+        System.out.println("deleteDocument name: " + document.getDocument().getFileName());
+        PrimefaceUtil.addMessages(fileUploadService.deleteDocument(document));
         documents.remove(selectDocument);
         selectDocument = null;
     }
@@ -84,12 +85,12 @@ public class FileUploadView implements Serializable {
         PrimefaceUtil.warn("Les modification ont été annulées");
     }
 
-    public void view() {
+    public void view(ResultSearch document) {
         this.pdf = false;
         this.image = false;
         this.show=true;
-        if (this.selectDocument != null) {
-                String fileName = this.selectDocument.getDocument().getFileName();
+        if (document != null) {
+                String fileName = document.getDocument().getFileName();
                 if (fileName.endsWith(".pdf"))
                     this.pdf = true;
                 else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png"))
@@ -97,6 +98,7 @@ public class FileUploadView implements Serializable {
 
                 show=false;
         }
+        this.selectDocument = document;
         
     }
 

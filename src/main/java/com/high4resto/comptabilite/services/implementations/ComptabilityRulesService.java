@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.high4resto.comptabilite.documents.ComptabilityRules;
 import com.high4resto.comptabilite.documents.LogMessage;
 import com.high4resto.comptabilite.repository.ComptabilityRulesRepository;
 import com.high4resto.comptabilite.services.contract.ComptabilityRulesContract;
 
-public class ComptabilityService implements ComptabilityRulesContract {
+@Service
+public class ComptabilityRulesService implements ComptabilityRulesContract {
 
     @Autowired
     private ComptabilityRulesRepository comptabilityRulesRepository;
@@ -46,7 +48,5 @@ public class ComptabilityService implements ComptabilityRulesContract {
         logs.add(log);
         return logs;
     }
-
-
     
 }

@@ -1,79 +1,98 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
-    <div class="container-fluid">
+  xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets">
+  <div class="container-fluid">
 
+    <div class="card">
+      <h:form id="form2" enctype="multipart/form-data">
+        <p:fileUpload label="Téléverser un fichier" mode="advanced" listener="#{fileUploadView.handleFileUpload}"
+          update="growl:growl" allowTypes="/(\.|\/)(pdf|docx|doc|xls|txt|jpg|jpeg|png|)$/i" maxFileSize="10000000"
+          multiple="false" auto="true" />
+      </h:form>
+
+      <h:form id="form3" style="margin-top:-40px">
         <div class="card">
-          <h:form id="form2" enctype="multipart/form-data">
-            <p:fileUpload label="Téléverser un fichier" mode="advanced" listener="#{fileUploadView.handleFileUpload}" update="growl:growl"
-              allowTypes="/(\.|\/)(pdf|docx|doc|xls|txt|jpg|jpeg|png|)$/i"
-              maxFileSize="10000000" multiple="false" auto="true" />
-          </h:form>
-
-          <h:form id="form3" style="margin-top:-40px">
-            <div class="card">
-              <div class="row">
-                <div class="col-6">
-                  <p:inputTextarea id="searchInput" value="#{fileUploadView.searchInput}" placeholder="Rechercher dans un document"
-                  style="width:100%" />
-                </div>
-                <div class="col-6">
-                  <p:commandButton value="Rechercher dans un document" icon="pi pi-search" action="#{fileUploadView.search}"
-                  update="documents" />  
-                </div>
-                <div class="col-12">
-                  <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" editable="true"
-                  selection="#{fileUploadView.selectDocument}" rowKey="#{document.document.hash}" paginator="true"
-                   paginatorPosition="both"  rows="10" filteredValue="#{fileUploadView.filteredDocuments}" selectionMode="single">
-                  <p:ajax event="rowSelect" listener="#{fileUploadView.onRowSelect}" update="growl:growl"/>
-                  <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="growl:growl"/>
-                  <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="growl:growl"/>
-                  <p:column headerText="Nom du fichier" filterBy="#{document.document.fileName}" sortBy="#{document.document.fileName}" filterMatchMode="contains">
-                    <p:cellEditor>
-                      <f:facet name="output">
-                        <h:outputText value="#{document.document.fileName}" />
-                      </f:facet>
-                      <f:facet name="input">
-                        <p:inputText id="fileNameInput" value="#{document.document.fileName}" style="width:100%" />
-                      </f:facet>
-                    </p:cellEditor>
-                  </p:column>
-    
-                  <p:column headerText="Type" filterBy="#{document.document.type}" sortBy="#{document.document.type}" filterMatchMode="contains">
-                    <p:cellEditor>
-                      <f:facet name="output">
-                        <h:outputText value="#{document.document.type}" />
-                      </f:facet>
-                      <f:facet name="input">
-                        <p:inputText id="fileTypeInput" value="#{document.document.type}" style="width:100%" />
-                      </f:facet>
-                    </p:cellEditor>
-                  </p:column>
-    
-                  <p:column headerText="Description" filterBy="#{document.document.description}" sortBy="#{document.document.description}" filterMatchMode="contains">
-                    <p:cellEditor>
-                      <f:facet name="output">
-                        <h:outputText value="#{document.document.description}" />
-                      </f:facet>
-                      <f:facet name="input">
-                        <p:inputTextarea id="fileDescriptionInput" value="#{document.document.description}" style="width:100%" />
-                      </f:facet>
-                    </p:cellEditor>
-                  </p:column>
-                  <p:column style="width:6rem">
-                    <p:rowEditor editTitle="Editer" cancelTitle="Annulé l'édition" saveTitle="Sauvegarder" />
-                  </p:column>
-                </p:dataTable>
-                </div>
-              </div>
+          <div class="row">
+            <div class="col-6">
+              <p:inputTextarea id="searchInput" value="#{fileUploadView.searchInput}"
+                placeholder="Rechercher dans un document" style="width:100%" />
             </div>
+            <div class="col-6">
+              <p:commandButton value="Rechercher dans un document" icon="pi pi-search" action="#{fileUploadView.search}"
+                update="documents" />
+            </div>
+            <div class="col-12">
+              <p:dataTable var="document" id="documents" value="#{fileUploadView.documents}" editable="true"
+                paginator="true" paginatorPosition="both" rows="10" filteredValue="#{fileUploadView.filteredDocuments}">
+                <p:ajax event="rowEdit" listener="#{fileUploadView.onRowEdit}" update="growl:growl" />
+                <p:ajax event="rowEditCancel" listener="#{fileUploadView.onRowCancel}" update="growl:growl" />
+                <p:column headerText="Nom du fichier" filterBy="#{document.document.fileName}"
+                  sortBy="#{document.document.fileName}" filterMatchMode="contains">
+                  <p:cellEditor>
+                    <f:facet name="output">
+                      <h:outputText value="#{document.document.fileName}" />
+                    </f:facet>
+                    <f:facet name="input">
+                      <p:inputText id="fileNameInput" value="#{document.document.fileName}" style="width:100%" />
+                    </f:facet>
+                  </p:cellEditor>
+                </p:column>
 
-            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
-              <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no ui-button-flat" />
-              <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" />
-            </p:confirmDialog>
+                <p:column headerText="Type" filterBy="#{document.document.type}" sortBy="#{document.document.type}"
+                  filterMatchMode="contains">
+                  <p:cellEditor>
+                    <f:facet name="output">
+                      <h:outputText value="#{document.document.type}" />
+                    </f:facet>
+                    <f:facet name="input">
+                      <p:inputText id="fileTypeInput" value="#{document.document.type}" style="width:100%" />
+                    </f:facet>
+                  </p:cellEditor>
+                </p:column>
 
-          </h:form>
+                <p:column headerText="Description" filterBy="#{document.document.description}"
+                  sortBy="#{document.document.description}" filterMatchMode="contains">
+                  <p:cellEditor>
+                    <f:facet name="output">
+                      <h:outputText value="#{document.document.description}" />
+                    </f:facet>
+                    <f:facet name="input">
+                      <p:inputTextarea id="fileDescriptionInput" value="#{document.document.description}"
+                        style="width:100%" />
+                    </f:facet>
+                  </p:cellEditor>
+                </p:column>
+                <p:column style="width:6rem">
+                  <p:rowEditor editTitle="Editer" cancelTitle="Annulé l'édition" saveTitle="Sauvegarder" />
+                </p:column>
+                <p:column style="width:6rem">
+                  <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger"
+                    update="document:form3:documents growl:growl" action="#{fileUploadView.deleteDocument(document)}">
+                    <p:confirm header="Confirmation" message="Êtes-vous sur de vouloir supprimer le document ?"
+                      icon="pi pi-info-circle" />
+                  </p:commandButton>
+                </p:column>
+                <p:column style="width:16rem">
+                  <p:menu rendered="#{login.loggedIn}" style="margin-right:20px">
+                    <p:menuitem value="Afficher le document" icon="pi pi-file" action="#{fileUploadView.view(document)}"
+                      update="pdfPanel" oncomplete="PF('pdfViewer').show()" />
+                    <p:menuitem value="Traiter comme facture" icon="pi pi-money-bill" action="#{transactionView.fromDocument(document)}"
+                      update="growl:growl globalTab:vendorInvoice:transaction:savedTransactions:newTransaction globalTab:vendorInvoice:transaction:openAiInvoiceLine">
+                    </p:menuitem>
+                  </p:menu>
+                </p:column>
+
+              </p:dataTable>
+            </div>
+          </div>
         </div>
-      </div>
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+          <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no ui-button-flat" />
+          <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" />
+        </p:confirmDialog>
+
+      </h:form>
+    </div>
+  </div>
 </ui:composition>

@@ -295,10 +295,17 @@ public class TransactionService implements TransactionServiceContract {
         
         pattern = Pattern.compile("SIRET:[0-9]{3}.[0-9]{3}.[0-9]{3}.[0-9]{2}.[0-9]{3}");
         matcher = pattern.matcher(pdf);
-        if (matcher.find()) {
+        while (matcher.find()) {
             String siret = matcher.group().substring(6).replaceAll("\s+", "");
-            society = sirenApiService.getVendorFromSiret(siret).getSociety();
-            transaction.getVendor().setSociety(society);
+            try{
+                society = sirenApiService.getVendorFromSiret(siret).getSociety();
+                transaction.getVendor().setSociety(society);    
+            }
+            catch(Exception e)
+            {
+                society=new Society();
+                transaction.getVendor().setSociety(society);
+            }
         }
 
         pattern = Pattern.compile("FR.[0-9]{2}.[0-9]{3}.[0-9]{3}.CE");
@@ -615,6 +622,8 @@ public class TransactionService implements TransactionServiceContract {
                 break;
             }
             catch(Exception e){
+                tpVendor=new Vendor();
+                transaction.setVendor(tpVendor);
             }
         }
             // Else with french Tva number

@@ -20,7 +20,8 @@ public class ComptabiliteApplication implements CommandLineRunner {
 		try {
 			Process p = Runtime.getRuntime().exec("ip addr show eth0");
 			p.waitFor();
-			java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
+			java.io.BufferedReader reader = new java.io.BufferedReader(
+					new java.io.InputStreamReader(p.getInputStream()));
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				if (line.contains("inet ")) {
@@ -31,12 +32,12 @@ public class ComptabiliteApplication implements CommandLineRunner {
 			e.printStackTrace();
 		}
 
-			return ip;
+		return ip;
 	}
-	
+
 	@Override
 	public void run(String... args) throws Exception {
-		logger.info("Bienvenu sur votre logiciel de comptabilité");		
-		logger.info("Pour accéder à l'interface: http://" + getIp()+":8080"+"/index.xhtml");
+		logger.info("Bienvenu sur votre logiciel de comptabilité");
+		logger.info("Pour accéder à l'interface: http://" + getIp() + ":8080" + "/index.xhtml");
 	}
 }

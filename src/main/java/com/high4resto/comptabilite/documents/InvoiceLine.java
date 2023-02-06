@@ -1,5 +1,7 @@
 package com.high4resto.comptabilite.documents;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,6 +17,10 @@ public class InvoiceLine {
     private String Id;
     @Getter @Setter
     private Item item;
+    @Getter @Setter
+    private String reference;
+    @Getter @Setter
+    private Date date;
     @Getter @Setter
     private int quantity;
     @Getter @Setter

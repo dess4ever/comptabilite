@@ -423,6 +423,30 @@
                                             </p:cellEditor>
                                         </p:column>
 
+                                        <p:column headerText="Référence">
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <h:outputText value="#{line.reference}" />
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:inputText value="#{line.reference}" />
+                                                </f:facet>
+                                            </p:cellEditor>
+                                        </p:column>
+
+                                        <p:column headerText="Date">
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <h:outputText value="#{line.date}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Paris" />
+                                                    </h:outputText>
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:datePicker value="#{line.date}" pattern="dd/MM/yyyy" />
+                                                </f:facet>
+                                            </p:cellEditor>
+                                        </p:column>
+
                                         <p:column headerText="Quantité">
                                             <p:cellEditor>
                                                 <f:facet name="output">

@@ -21,6 +21,7 @@ import lombok.Setter;
 public class TransactionFilter implements Predicate<Transaction> {
 
     @Id
+    @Getter @Setter
     private String id;
     @Getter @Setter
     private String name;

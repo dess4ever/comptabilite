@@ -13,19 +13,16 @@ import com.high4resto.comptabilite.documents.Vendor;
 @Service
 public class SirenApiService {
     // get json from api data.sire-api.fr with siret. header must be X-Client-Secret and value must be setting by env variable SIREN_TOKEN
-    private String getJsonFromSiret(String siret) {
+    private String getJsonFromSiret(String siret) throws IOException {
         String url="https://data.siren-api.fr/v3/etablissements/" + siret;
         String json = "";
-        try {
+
             json = Jsoup.connect(url)
                     .header("X-Client-Secret", System.getenv("SIREN_TOKEN"))
                     .ignoreContentType(true)
                     .execute()
                     .body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        return "";
-        }
+
 
         return json;
     }
@@ -80,7 +77,7 @@ public class SirenApiService {
     }
 
     // retrive vendor data with sitet from api data.sire-api.fr
-    public Vendor getVendorFromSiret(String siret) {
+    public Vendor getVendorFromSiret(String siret) throws IOException {
         Vendor vendor = new Vendor();
         String json = getJsonFromSiret(siret);
         if (json != "") {
@@ -123,7 +120,7 @@ public class SirenApiService {
         }
         return vendor;
     }
-    public Society getCustomerFromSiret(String siret)
+    public Society getCustomerFromSiret(String siret) throws IOException
     {
         Society society = new Society();
         String json = getJsonFromSiret(siret);

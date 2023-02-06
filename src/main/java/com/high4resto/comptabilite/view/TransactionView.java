@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.high4resto.comptabilite.dataStruct.ResultSearch;
 import com.high4resto.comptabilite.dataStruct.TreeDictionnary;
 import com.high4resto.comptabilite.documents.InvoiceLine;
 import com.high4resto.comptabilite.documents.Transaction;
@@ -35,8 +36,7 @@ public class TransactionView implements Serializable{
     private UserLoginView userLoginView;
     @Autowired
     private SirenApiService sirenApiService;
-    @Autowired 
-    private FileUploadView documentView;
+
     @Autowired
     private TvaRepository tvaRepository;
 
@@ -210,12 +210,12 @@ public class TransactionView implements Serializable{
         }
     }
 
-    public void fromDocument()
+    public void fromDocument(ResultSearch document)
     {
-        this.currentTransaction=transactionService.importInvoiceTransaction(documentView.getSelectDocument().getDocument());
-        this.currentTransaction.setRefDocument(documentView.getSelectDocument().getDocument().getHash());
+        this.currentTransaction=transactionService.importInvoiceTransaction(document.getDocument());
+        this.currentTransaction.setRefDocument(document.getDocument().getHash());
         this.calculateTotal();
-        this.textForItem=documentView.getSelectDocument().getDocument().getBrut();
+        this.textForItem=document.getDocument().getBrut();
         PrimefaceUtil.info("Facture importée dans le formulaire transaction en cours");
     }
     public void calculateTotal()
